@@ -1,18 +1,65 @@
-import Order from "../models/order.js";
-import GeneralStat from "../models/GeneralStat.js";
-export const getOrders = async (req, res) => {
+import Order from '../models/order';
+import GeneralStat from '../models/GeneralStat'; // Adjust the path as per your file structure
+
+export const calculateTotalSalesForOrder = async (req, res) => {
   try {
     const orders = await Order.find();
-    const ordersWithStats = await Promise.all(orders.map(async (order) => {
-        const stat = await GeneralStat.find({productId: order._id});
-        return {
-          ...order._doc,
-          stat,
-        };
-      })
-    );
-    res.status(200).json(ordersWithStats);
+    
+    // Initialize objects to store totals
+    const years = {};
+    const months = {};
+    const days = {};
+    const yearArray = [];
+    const monthArray = [];
+    const dayArray = [];
+    
+    // Calculate totals by year, month, and day
+    orders.forEach(order => {
+      const orderDate = new Date(order.createdAt);
+      const year = orderDate.getFullYear();
+      const month = orderDate.getMonth() + 1; // getMonth() returns 0-based index
+      const day = orderDate.getDate();
+      
+      // Ensure unique years, months, and days
+      if (!years[year]) {
+        years[year] = 0;
+        yearArray.push(year);
+      }
+      if (!months[month]) {
+        months[month] = 0;
+        monthArray.push(month);
+      }
+      if (!days[day]) {
+        days[day] = 0;
+        dayArray.push(day);
+      }
+      
+      // Accumulate total sales
+      years[year] += order.totalAmount; // Assuming order.totalAmount is the attribute for total sales
+      months[month] += order.totalAmount;
+      days[day] += order.totalAmount;
+    });
+
+    // Create GeneralStat document
+    const stat = await GeneralStat.create({
+      yearlyData: yearArray.map(y => ({
+        year: y,
+        totalSales: years[y]
+      })),
+      monthlyData: monthArray.map(m => ({
+        month: m.toString(),
+        totalSales: months[m]
+      })),
+      dailyData: dayArray.map(d => ({
+        date: d.toString(),
+        totalSales: days[d]
+      }))
+    });
+
+    // Respond with created GeneralStat document
+    res.status(200).json(stat);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    console.error('Error calculating total sales:', error);
+    res.status(500).json({ message: 'Failed to calculate total sales.' });
   }
 };

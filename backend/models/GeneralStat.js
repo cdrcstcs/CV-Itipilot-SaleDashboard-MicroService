@@ -2,22 +2,22 @@ import mongoose from "mongoose";
 
 const GeneralStatSchema = new mongoose.Schema(
   {
-    productId: String,
-    yearlySalesTotal: Number,
-    yearlyTotalSoldUnits: Number,
-    year: Number,
+    yearlyData: [
+      {
+        year: String,
+        totalSales: Number,
+      },
+    ],
     monthlyData: [
       {
         month: String,
         totalSales: Number,
-        totalUnits: Number,
       },
     ],
     dailyData: [
       {
         date: String,
         totalSales: Number,
-        totalUnits: Number,
       },
     ],
   },
