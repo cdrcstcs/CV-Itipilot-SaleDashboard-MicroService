@@ -1,23 +1,17 @@
 import Order from "../models/order.js";
-import OrderStat from "../models/GeneralStat.js";
-import User from "../models/User.js";
-import Transaction from "../models/Transaction.js";
-import getCountryIso3 from "country-iso-2-to-3";
+import GeneralStat from "../models/GeneralStat.js";
 export const getOrders = async (req, res) => {
   try {
-    const Orders = await Order.find();
-    const OrdersWithStats = await Promise.all(
-      Orders.map(async (Order) => {
-        const stat = await OrderStat.find({
-          OrderId: Order._id,
-        });
+    const orders = await Order.find();
+    const ordersWithStats = await Promise.all(orders.map(async (order) => {
+        const stat = await GeneralStat.find({productId: order._id});
         return {
-          ...Order._doc,
+          ...order._doc,
           stat,
         };
       })
     );
-    res.status(200).json(OrdersWithStats);
+    res.status(200).json(ordersWithStats);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }

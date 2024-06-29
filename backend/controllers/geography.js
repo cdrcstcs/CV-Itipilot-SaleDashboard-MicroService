@@ -1,3 +1,5 @@
+import User from "../models/User.js";
+import getCountryIso3 from "country-iso-2-to-3";
 export const getGeography = async (req, res) => {
     try {
       const users = await User.find();
@@ -18,5 +20,5 @@ export const getGeography = async (req, res) => {
     } catch (error) {
       res.status(404).json({ message: error.message });
     }
-  };
+};
   

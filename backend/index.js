@@ -2,28 +2,13 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
-import clientRoutes from "./routes/client.js";
-import generalRoutes from "./routes/general.js";
-import managementRoutes from "./routes/management.js";
-import salesRoutes from "./routes/sales.js";
-import User from "./models/User.js";
-import Product from "./models/Product.js";
-import ProductStat from "./models/GeneralStat.js";
-import Transaction from "./models/Transaction.js";
-import OverallStat from "./models/OverallStat.js";
-import AffiliateStat from "./models/AffiliateStat.js";
-import {
-  dataUser,
-  dataProduct,
-  dataProductStat,
-  dataTransaction,
-  dataOverallStat,
-  dataAffiliateStat,
-} from "./data/index.js";
-dotenv.config();
+import { getBookings } from "./controllers/booking";
+import { getGeography } from "./controllers/geography";
+import { getOrders } from "./controllers/order";
+import { getTransactions } from "./controllers/transaction";
+import { getUser, getCustomers, getAdmins } from "./controllers/user";
 const app = express();
 app.use(express.json());
 app.use(helmet());
@@ -32,22 +17,13 @@ app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
-app.use("/client", clientRoutes);
-app.use("/general", generalRoutes);
-app.use("/management", managementRoutes);
-app.use("/sales", salesRoutes);
+app.get("/booking", getBookings);
+app.get("/order", getOrders);
+app.get("/geography", getGeography);
+app.get("/transaction", getTransactions);
+app.get("/user", getUser);
+app.get("/admins", getAdmins);
+app.get("/customer", getCustomers);
 const PORT = 9000;
-mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
-    AffiliateStat.insertMany(dataAffiliateStat);
-    OverallStat.insertMany(dataOverallStat);
-    Product.insertMany(dataProduct);
-    ProductStat.insertMany(dataProductStat);
-    Transaction.insertMany(dataTransaction);
-    User.insertMany(dataUser);
-  })
-  .catch((error) => console.log(`${error} did not connect`));
+const MONGO_URL = "mongodb://localhost:27017/mongo-golang";
+mongoose.connect(MONGO_URL).then(() => { app.listen(PORT, () => console.log(`Server Port: ${PORT}`)); }).catch((error) => console.log(`${error} did not connect`));

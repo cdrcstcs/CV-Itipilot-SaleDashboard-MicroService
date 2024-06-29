@@ -1,23 +1,19 @@
 import Booking from "../models/booking.js";
-import BookingStat from "../models/GeneralStat.js";
-import User from "../models/User.js";
-import Transaction from "../models/Transaction.js";
-import getCountryIso3 from "country-iso-2-to-3";
+import GeneralStat from "../models/GeneralStat.js";
 export const getBookings = async (req, res) => {
   try {
-    const Bookings = await Booking.find();
-    const BookingsWithStats = await Promise.all(
-      Bookings.map(async (Booking) => {
-        const stat = await BookingStat.find({
-          BookingId: Booking._id,
+    const bookings = await Booking.find();
+    const bookingsWithStats = await Promise.all(bookings.map(async (booking) => {
+        const stat = await GeneralStat.find({
+          productId: booking._id,
         });
         return {
-          ...Booking._doc,
+          ...booking._doc,
           stat,
         };
       })
     );
-    res.status(200).json(BookingsWithStats);
+    res.status(200).json(bookingsWithStats);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
