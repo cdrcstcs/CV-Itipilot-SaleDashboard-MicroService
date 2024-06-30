@@ -1,28 +1,41 @@
 import React from "react";
 import { ResponsivePie } from "@nivo/pie";
 import { Box, Typography, useTheme } from "@mui/material";
-import { useGetSalesQuery } from "state/api";
+import { useGetBookingsQuery, useGetOrdersQuery } from "state/api";
 
-const BreakdownChart = ({ isDashboard = false }) => {
-  const { data, isLoading } = useGetSalesQuery();
+const BreakdownChart = ({ isDashboard }) => {
   const theme = useTheme();
+  const { bookings } = useGetBookingsQuery();
+  const { orders } = useGetOrdersQuery();
 
-  if (!data || isLoading) return "Loading...";
+  if (!bookings || !orders) return "Loading...";
 
-  const colors = [
-    theme.palette.secondary[500],
-    theme.palette.secondary[300],
-    theme.palette.secondary[300],
-    theme.palette.secondary[500],
+  let totalSalesForBookings = Object.values(bookings).reduce((acc, timeType) => {
+    return acc + Object.values(timeType).reduce((acc1, { time, totalSales }) => {
+      return acc1 + totalSales;
+    }, 0);
+  }, 0);
+
+  let totalSalesForOrders = Object.values(orders).reduce((acc, timeType) => {
+    return acc + Object.values(timeType).reduce((acc1, { time, totalSales }) => {
+      return acc1 + totalSales;
+    }, 0);
+  }, 0);
+
+  const formattedData = [
+    {
+      id: 'Bookings',
+      label: "Bookings",
+      value: totalSalesForBookings,
+      color: theme.palette.secondary[500],
+    },
+    {
+      id: 'Orders',
+      label: "Orders",
+      value: totalSalesForOrders,
+      color: theme.palette.secondary[300],
+    }
   ];
-  const formattedData = Object.entries(data.salesByCategory).map(
-    ([category, sales], i) => ({
-      id: category,
-      label: category,
-      value: sales,
-      color: colors[i],
-    })
-  );
 
   return (
     <Box
@@ -67,7 +80,7 @@ const BreakdownChart = ({ isDashboard = false }) => {
             },
           },
         }}
-        colors={{ datum: "data.color" }}
+        colors={(datum) => datum.color}
         margin={
           isDashboard
             ? { top: 40, right: 80, bottom: 100, left: 50 }
@@ -130,7 +143,9 @@ const BreakdownChart = ({ isDashboard = false }) => {
         }}
       >
         <Typography variant="h6">
-          {!isDashboard && "Total:"} ${data.yearlySalesTotal}
+          {!isDashboard && "Total:"} {/* Ensure data.yearlySalesTotal is defined */}
+          {/* Replace data.yearlySalesTotal with correct variable */}
+          ${data.yearlySalesTotal}
         </Typography>
       </Box>
     </Box>

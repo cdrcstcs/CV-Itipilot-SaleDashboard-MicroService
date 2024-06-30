@@ -1,13 +1,12 @@
 import React from "react";
 import { Box, useTheme } from "@mui/material";
 import { useGetAdminsQuery } from "state/api";
-import { DataGrid } from "@mui/x-data-grid";
 import Header from "components/Header";
-import CustomColumnMenu from "components/DataGridCustomColumnMenu";
-
-const Admin = () => {
+import { DataGrid } from "@mui/x-data-grid";
+const Admins = () => {
   const theme = useTheme();
   const { data, isLoading } = useGetAdminsQuery();
+  console.log("data", data);
 
   const columns = [
     {
@@ -26,7 +25,7 @@ const Admin = () => {
       flex: 1,
     },
     {
-      field: "phoneNumber",
+      field: "phone",
       headerName: "Phone Number",
       flex: 0.5,
       renderCell: (params) => {
@@ -39,12 +38,7 @@ const Admin = () => {
       flex: 0.4,
     },
     {
-      field: "occupation",
-      headerName: "Occupation",
-      flex: 1,
-    },
-    {
-      field: "role",
+      field: "userType",
       headerName: "Role",
       flex: 0.5,
     },
@@ -52,7 +46,7 @@ const Admin = () => {
 
   return (
     <Box m="1.5rem 2.5rem">
-      <Header title="ADMINS" subtitle="Managing admins and list of admins" />
+      <Header title="ADMINS" subtitle="List of Admins" />
       <Box
         mt="40px"
         height="75vh"
@@ -86,13 +80,10 @@ const Admin = () => {
           getRowId={(row) => row._id}
           rows={data || []}
           columns={columns}
-          components={{
-            ColumnMenu: CustomColumnMenu,
-          }}
         />
       </Box>
     </Box>
   );
 };
 
-export default Admin;
+export default Admins;

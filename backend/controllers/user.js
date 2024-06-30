@@ -1,6 +1,6 @@
 import User from "../models/User";
 export const getUser = async (req, res) => {
-  const { id } = req.params;
+  const id = req.user.userId;
   try {
     const user = await User.findById(id);
     if(user.userType == "ADMIN"){

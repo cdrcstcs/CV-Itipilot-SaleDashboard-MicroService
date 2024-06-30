@@ -26,7 +26,7 @@ const Customers = () => {
       flex: 1,
     },
     {
-      field: "phoneNumber",
+      field: "phone",
       headerName: "Phone Number",
       flex: 0.5,
       renderCell: (params) => {
@@ -39,12 +39,7 @@ const Customers = () => {
       flex: 0.4,
     },
     {
-      field: "occupation",
-      headerName: "Occupation",
-      flex: 1,
-    },
-    {
-      field: "role",
+      field: "userType",
       headerName: "Role",
       flex: 0.5,
     },

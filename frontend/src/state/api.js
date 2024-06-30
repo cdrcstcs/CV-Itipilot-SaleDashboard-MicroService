@@ -1,71 +1,70 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
+function getCookie(name) {
+  const cookieRegex = new RegExp(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
+  const cookieMatch = document.cookie.match(cookieRegex);
+  return cookieMatch ? decodeURIComponent(cookieMatch[2]) : null;
+}
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:9000', prepareHeaders: (headers) => {
+    const token = getCookie('usertoken');
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  }}),
   reducerPath: "adminApi",
   tagTypes: [
     "User",
-    "Products",
+    "Bookings",
+    "Orders",
     "Customers",
-    "Transactions",
+    "Blist",
+    "Olist",
     "Geography",
-    "Sales",
     "Admins",
-    "Performance",
-    "Dashboard",
   ],
   endpoints: (build) => ({
     getUser: build.query({
-      query: (id) => `general/user/${id}`,
+      query: () => `/user`,
       providesTags: ["User"],
     }),
-    getProducts: build.query({
-      query: () => "client/products",
-      providesTags: ["Products"],
+    getBookings: build.query({
+      query: () => "/bookings",
+      providesTags: ["Bookings"],
+    }),
+    getOrders: build.query({
+      query: () => "/orders",
+      providesTags: ["Orders"],
+    }),
+    getBookingList: build.query({
+      query: () => "/blist",
+      providesTags: ["Blist"],
+    }),
+    getOrderList: build.query({
+      query: () => "/olist",
+      providesTags: ["Olist"],
     }),
     getCustomers: build.query({
-      query: () => "client/customers",
+      query: () => "/customers",
       providesTags: ["Customers"],
     }),
-    getTransactions: build.query({
-      query: ({ page, pageSize, sort, search }) => ({
-        url: "client/transactions",
-        method: "GET",
-        params: { page, pageSize, sort, search },
-      }),
-      providesTags: ["Transactions"],
-    }),
     getGeography: build.query({
-      query: () => "client/geography",
+      query: () => "/geography",
       providesTags: ["Geography"],
     }),
-    getSales: build.query({
-      query: () => "sales/sales",
-      providesTags: ["Sales"],
-    }),
     getAdmins: build.query({
-      query: () => "management/admins",
+      query: () => "/admins",
       providesTags: ["Admins"],
-    }),
-    getUserPerformance: build.query({
-      query: (id) => `management/performance/${id}`,
-      providesTags: ["Performance"],
-    }),
-    getDashboard: build.query({
-      query: () => "general/dashboard",
-      providesTags: ["Dashboard"],
     }),
   }),
 });
-
 export const {
   useGetUserQuery,
-  useGetProductsQuery,
+  useGetBookingsQuery,
+  useGetOrdersQuery,
+  useGetBookingListQuery,
+  useGetOrderListQuery,
   useGetCustomersQuery,
-  useGetTransactionsQuery,
   useGetGeographyQuery,
-  useGetSalesQuery,
   useGetAdminsQuery,
-  useGetUserPerformanceQuery,
-  useGetDashboardQuery,
 } = api;

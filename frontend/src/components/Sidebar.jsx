@@ -16,34 +16,26 @@ import {
   SettingsOutlined,
   ChevronLeft,
   ChevronRightOutlined,
-  HomeOutlined,
   ShoppingCartOutlined,
   Groups2Outlined,
-  ReceiptLongOutlined,
   PublicOutlined,
   PointOfSaleOutlined,
   TodayOutlined,
   CalendarMonthOutlined,
   AdminPanelSettingsOutlined,
-  TrendingUpOutlined,
   PieChartOutlined,
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import FlexBetween from "./FlexBetween";
-import profileImage from "assets/profile.jpeg";
 
 const navItems = [
   {
-    text: "Dashboard",
-    icon: <HomeOutlined />,
+    text: "Bookings",
+    icon: <ShoppingCartOutlined />,
   },
   {
-    text: "Client Facing",
-    icon: null,
-  },
-  {
-    text: "Products",
+    text: "Orders",
     icon: <ShoppingCartOutlined />,
   },
   {
@@ -51,20 +43,8 @@ const navItems = [
     icon: <Groups2Outlined />,
   },
   {
-    text: "Transactions",
-    icon: <ReceiptLongOutlined />,
-  },
-  {
     text: "Geography",
     icon: <PublicOutlined />,
-  },
-  {
-    text: "Sales",
-    icon: null,
-  },
-  {
-    text: "Overview",
-    icon: <PointOfSaleOutlined />,
   },
   {
     text: "Daily",
@@ -75,20 +55,16 @@ const navItems = [
     icon: <CalendarMonthOutlined />,
   },
   {
+    text: "Yearly",
+    icon: <CalendarMonthOutlined />,
+  },
+  {
     text: "Breakdown",
     icon: <PieChartOutlined />,
   },
   {
-    text: "Management",
-    icon: null,
-  },
-  {
     text: "Admin",
     icon: <AdminPanelSettingsOutlined />,
-  },
-  {
-    text: "Performance",
-    icon: <TrendingUpOutlined />,
   },
 ];
 
@@ -132,7 +108,7 @@ const Sidebar = ({
               <FlexBetween color={theme.palette.secondary.main}>
                 <Box display="flex" alignItems="center" gap="0.5rem">
                   <Typography variant="h4" fontWeight="bold">
-                    ECOMVISION
+                    Itipilot
                   </Typography>
                 </Box>
                 {!isNonMobile && (
@@ -152,7 +128,6 @@ const Sidebar = ({
                   );
                 }
                 const lcText = text.toLowerCase();
-
                 return (
                   <ListItem key={text} disablePadding>
                     <ListItemButton
@@ -196,15 +171,6 @@ const Sidebar = ({
           <Box position="absolute" bottom="2rem">
             <Divider />
             <FlexBetween textTransform="none" gap="1rem" m="1.5rem 2rem 0 3rem">
-              <Box
-                component="img"
-                alt="profile"
-                src={profileImage}
-                height="40px"
-                width="40px"
-                borderRadius="50%"
-                sx={{ objectFit: "cover" }}
-              />
               <Box textAlign="left">
                 <Typography
                   fontWeight="bold"
@@ -217,7 +183,7 @@ const Sidebar = ({
                   fontSize="0.8rem"
                   sx={{ color: theme.palette.secondary[200] }}
                 >
-                  {user.occupation}
+                  {user.email}
                 </Typography>
               </Box>
               <SettingsOutlined
@@ -233,5 +199,4 @@ const Sidebar = ({
     </Box>
   );
 };
-
 export default Sidebar;

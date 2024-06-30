@@ -1,5 +1,14 @@
 import Booking from '../models/booking';
 import GeneralStat from '../models/GeneralStat'; // Adjust the path as per your file structure
+export const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find();
+    res.status(200).json(bookings);
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    res.status(500).json({ message: 'Failed to fetch bookings' });
+  }
+};
 
 export const calculateTotalSalesForBooking = async (req, res) => {
   try {

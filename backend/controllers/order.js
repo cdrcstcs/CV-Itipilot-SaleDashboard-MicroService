@@ -1,6 +1,15 @@
 import Order from '../models/order';
 import GeneralStat from '../models/GeneralStat'; // Adjust the path as per your file structure
 
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find();
+    res.status(200).json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "something went wrong" });
+  }
+};
 export const calculateTotalSalesForOrder = async (req, res) => {
   try {
     const orders = await Order.find();

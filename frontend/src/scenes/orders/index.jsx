@@ -7,22 +7,32 @@ import {
   Collapse,
   Button,
   Typography,
-  Rating,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
 import Header from "components/Header";
-import { useGetProductsQuery } from "state/api";
+import { useGetOrderListQuery } from "state/api";
+import React, { useState } from "react";
+import {
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  Collapse,
+  Button,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
-const Product = ({
+const Order = ({
   _id,
-  name,
-  description,
-  price,
-  rating,
-  category,
-  supply,
-  stat,
+  restaurant,
+  user,
+  deliveryDetails,
+  cartItems,
+  totalAmount,
+  status,
+  createdAt,
 }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -41,17 +51,18 @@ const Product = ({
           color={theme.palette.secondary[700]}
           gutterBottom
         >
-          {category}
+          {status}
         </Typography>
         <Typography variant="h5" component="div">
-          {name}
+          {restaurant.name} Order
         </Typography>
         <Typography sx={{ mb: "1.5rem" }} color={theme.palette.secondary[400]}>
-          ${Number(price).toFixed(2)}
+          Total Amount: ${Number(totalAmount).toFixed(2)}
         </Typography>
-        <Rating value={rating} readOnly />
-
-        <Typography variant="body2">{description}</Typography>
+        <Typography variant="body2">
+          User: {deliveryDetails.name} ({deliveryDetails.email})
+          {user ? `User ID: ${user}` : 'No user specified'}
+        </Typography>
       </CardContent>
       <CardActions>
         <Button
@@ -71,22 +82,23 @@ const Product = ({
         }}
       >
         <CardContent>
-          <Typography>id: {_id}</Typography>
-          <Typography>Supply Left: {supply}</Typography>
-          <Typography>
-            Yearly Sales This Year: {stat.yearlySalesTotal}
-          </Typography>
-          <Typography>
-            Yearly Units Sold This Year: {stat.yearlyTotalSoldUnits}
-          </Typography>
+          <Typography>Id: {_id}</Typography>
+          <Typography>Created At: {new Date(createdAt).toLocaleString()}</Typography>
+          <Typography>Items:</Typography>
+          <ul>
+            {cartItems.map((item, index) => (
+              <li key={index}>
+                {item.quantity} x {item.name}
+              </li>
+            ))}
+          </ul>
         </CardContent>
       </Collapse>
     </Card>
   );
 };
-
-const Products = () => {
-  const { data, isLoading } = useGetProductsQuery();
+const Orders = () => {
+  const { data, isLoading } = useGetOrderListQuery();
   const isNonMobile = useMediaQuery("(min-width: 1000px)");
 
   return (
@@ -107,24 +119,23 @@ const Products = () => {
           {data.map(
             ({
               _id,
-              name,
-              description,
-              price,
-              rating,
-              category,
-              supply,
-              stat,
+              restaurant,
+              user,
+              deliveryDetails,
+              cartItems,
+              totalAmount,
+              status,
+              createdAt,
             }) => (
-              <Product
-                key={_id}
+              <Order
                 _id={_id}
-                name={name}
-                description={description}
-                price={price}
-                rating={rating}
-                category={category}
-                supply={supply}
-                stat={stat}
+                restaurant={restaurant}
+                user={user}
+                deliveryDetails={deliveryDetails}
+                cartItems={cartItems}
+                totalAmount={totalAmount}
+                status={status}
+                createdAt={createdAt}
               />
             )
           )}
@@ -135,5 +146,4 @@ const Products = () => {
     </Box>
   );
 };
-
-export default Products;
+export default Orders;

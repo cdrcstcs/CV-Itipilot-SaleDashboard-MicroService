@@ -7,71 +7,78 @@ import { useGetOrdersQuery } from "state/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const Daily = () => {
-  const [startDate, setStartDate] = useState(new Date("2021-02-01"));
-  const [endDate, setEndDate] = useState(new Date("2021-03-01"));
+const Yearly = () => {
+  const [startYear, setStartYear] = useState(2021);
+  const [endYear, setEndYear] = useState(2021);
   const { bookings } = useGetBookingsQuery();
   const { orders } = useGetOrdersQuery();
   const theme = useTheme();
+
   const [formattedData] = useMemo(() => {
     if (!bookings || !orders) return [];
-    const { dailyData : dailyBookings } = bookings;
-    const { dailyData : dailyOrders } = orders; 
+
+    const { yearlyData: yearlyBookings } = bookings;
+    const { yearlyData: yearlyOrders } = orders;
+
     const totalSalesLineForBookings = {
       id: "totalBookingSales",
       color: theme.palette.secondary.main,
       data: [],
     };
+
     const totalSalesLineForOrders = {
       id: "totalOrderSales",
-      color: theme.palette.secondary.main,
+      color: theme.palette.primary.main,
       data: [],
     };
-    Object.values(dailyBookings).forEach(({ date, totalSales }) => {
-      const dateFormatted = new Date(date);
-      if (dateFormatted >= startDate && dateFormatted <= endDate) {
-        const splitDate = date.substring(date.indexOf("-") + 1);
+
+    Object.values(yearlyBookings).forEach(({ year, totalSales }) => {
+      if (year >= startYear && year <= endYear) {
         totalSalesLineForBookings.data = [
           ...totalSalesLineForBookings.data,
-          { x: splitDate, y: totalSales },
+          { x: year.toString(), y: totalSales },
         ];
       }
     });
-    Object.values(dailyOrders).forEach(({ date, totalSales }) => {
-      const dateFormatted = new Date(date);
-      if (dateFormatted >= startDate && dateFormatted <= endDate) {
-        const splitDate = date.substring(date.indexOf("-") + 1);
+
+    Object.values(yearlyOrders).forEach(({ year, totalSales }) => {
+      if (year >= startYear && year <= endYear) {
         totalSalesLineForOrders.data = [
           ...totalSalesLineForOrders.data,
-          { x: splitDate, y: totalSales },
+          { x: year.toString(), y: totalSales },
         ];
       }
     });
+
     const formattedData = [totalSalesLineForBookings, totalSalesLineForOrders];
     return [formattedData];
-  }, [bookings, orders, startDate, endDate, theme.palette.secondary.main, theme.palette.primary.main]);
+  }, [bookings, orders, startYear, endYear, theme.palette.secondary.main, theme.palette.primary.main]);
+
   return (
     <Box m="1.5rem 2.5rem">
-      <Header title="DAILY SALES" subtitle="Chart of daily sales" />
+      <Header title="YEARLY SALES" subtitle="Chart of yearly sales" />
       <Box height="75vh">
         <Box display="flex" justifyContent="flex-end">
           <Box>
             <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              selected={new Date(`${startYear}-01-01`)}
+              onChange={(date) => setStartYear(date.getFullYear())}
               selectsStart
-              startDate={startDate}
-              endDate={endDate}
+              startDate={new Date(`${startYear}-01-01`)}
+              endDate={new Date(`${endYear}-12-31`)}
+              dateFormat="yyyy"
+              showYearPicker
             />
           </Box>
           <Box>
             <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
+              selected={new Date(`${endYear}-01-01`)}
+              onChange={(date) => setEndYear(date.getFullYear())}
               selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
+              startDate={new Date(`${startYear}-01-01`)}
+              endDate={new Date(`${endYear}-12-31`)}
+              dateFormat="yyyy"
+              showYearPicker
             />
           </Box>
         </Box>
@@ -130,8 +137,8 @@ const Daily = () => {
               orient: "bottom",
               tickSize: 5,
               tickPadding: 5,
-              tickRotation: 90,
-              legend: "Month",
+              tickRotation: 0,
+              legend: "Year",
               legendOffset: 60,
               legendPosition: "middle",
             }}
@@ -187,4 +194,4 @@ const Daily = () => {
   );
 };
 
-export default Daily;
+export default Yearly;
