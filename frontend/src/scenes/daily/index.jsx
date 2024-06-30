@@ -10,8 +10,8 @@ import "react-datepicker/dist/react-datepicker.css";
 const Daily = () => {
   const [startDate, setStartDate] = useState(new Date("2021-02-01"));
   const [endDate, setEndDate] = useState(new Date("2021-03-01"));
-  const { bookings } = useGetBookingsQuery();
-  const { orders } = useGetOrdersQuery();
+  const { data: bookings} = useGetBookingsQuery();
+  const { data: orders } = useGetOrdersQuery();
   const theme = useTheme();
   const [formattedData] = useMemo(() => {
     if (!bookings || !orders) return [];

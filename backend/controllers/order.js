@@ -1,5 +1,5 @@
-import Order from '../models/order';
-import GeneralStat from '../models/GeneralStat'; // Adjust the path as per your file structure
+import Order from '../models/order.js';
+import GeneralStat from '../models/GeneralStat.js'; // Adjust the path as per your file structure
 
 export const getAllOrders = async (req, res) => {
   try {

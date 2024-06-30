@@ -13,9 +13,40 @@ import Admin from "scenes/admin";
 import Bookings from "scenes/bookings";
 import Orders from "scenes/orders";
 import Yearly from "scenes/yearly";
+import { useGetUserQuery } from "state/api";
+import axios from "axios";
+import { useState, useEffect } from "react";
+function getCookie(name) {
+  const cookieRegex = new RegExp(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
+  const cookieMatch = document.cookie.match(cookieRegex);
+  return cookieMatch ? decodeURIComponent(cookieMatch[2]) : null;
+}
 function App() {
   const mode = 'dark';
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = getCookie('usertoken');
+        if (!token) {
+          throw new Error('User token not found');
+        }
+
+        const res = await axios.post('http://localhost:9000/token', {token});
+        setUserData(res.data.userId);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setUserData(null);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+  const {data} = useGetUserQuery(userData);
+  if(!data){
+    return null;
+  }
   return (
     <div className="app">
       <BrowserRouter>

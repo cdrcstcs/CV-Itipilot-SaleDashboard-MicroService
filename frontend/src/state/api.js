@@ -1,17 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-function getCookie(name) {
-  const cookieRegex = new RegExp(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
-  const cookieMatch = document.cookie.match(cookieRegex);
-  return cookieMatch ? decodeURIComponent(cookieMatch[2]) : null;
-}
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:9000', prepareHeaders: (headers) => {
-    const token = getCookie('usertoken');
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-    return headers;
-  }}),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:9000'}),
   reducerPath: "adminApi",
   tagTypes: [
     "User",
@@ -25,7 +14,7 @@ export const api = createApi({
   ],
   endpoints: (build) => ({
     getUser: build.query({
-      query: () => `/user`,
+      query: (id) => `/user/${id}`,
       providesTags: ["User"],
     }),
     getBookings: build.query({

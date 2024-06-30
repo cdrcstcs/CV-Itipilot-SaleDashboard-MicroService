@@ -10,8 +10,8 @@ import "react-datepicker/dist/react-datepicker.css";
 const Yearly = () => {
   const [startYear, setStartYear] = useState(2021);
   const [endYear, setEndYear] = useState(2021);
-  const { bookings } = useGetBookingsQuery();
-  const { orders } = useGetOrdersQuery();
+  const { data: bookings } = useGetBookingsQuery();
+  const { data: orders } = useGetOrdersQuery();
   const theme = useTheme();
 
   const [formattedData] = useMemo(() => {

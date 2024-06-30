@@ -1,5 +1,5 @@
-import Booking from '../models/booking';
-import GeneralStat from '../models/GeneralStat'; // Adjust the path as per your file structure
+import Booking from '../models/booking.js';
+import GeneralStat from '../models/GeneralStat.js'; // Adjust the path as per your file structure
 export const getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find();

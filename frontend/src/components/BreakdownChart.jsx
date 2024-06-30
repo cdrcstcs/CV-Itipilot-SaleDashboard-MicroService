@@ -5,35 +5,32 @@ import { useGetBookingsQuery, useGetOrdersQuery } from "state/api";
 
 const BreakdownChart = () => {
   const theme = useTheme();
-  const { bookings } = useGetBookingsQuery();
-  const { orders } = useGetOrdersQuery();
-
+  const { data: bookings } = useGetBookingsQuery();
+  const { data: orders } = useGetOrdersQuery();
   if (!bookings || !orders) return "Loading...";
-
   let totalSalesForBookings = Object.values(bookings).reduce((acc, timeType) => {
     return acc + Object.values(timeType).reduce((acc1, { time, totalSales }) => {
-      return acc1 + totalSales;
+      return acc1 + totalSales?totalSales:0;
     }, 0);
   }, 0);
 
   let totalSalesForOrders = Object.values(orders).reduce((acc, timeType) => {
     return acc + Object.values(timeType).reduce((acc1, { time, totalSales }) => {
-      return acc1 + totalSales;
+      return acc1 + totalSales?totalSales:0;
     }, 0);
   }, 0);
-
   const formattedData = [
     {
       id: 'Bookings',
       label: "Bookings",
       value: totalSalesForBookings,
-      color: theme.palette.secondary[500],
+      color: 'green',
     },
     {
       id: 'Orders',
       label: "Orders",
       value: totalSalesForOrders,
-      color: theme.palette.secondary[300],
+      color: 'yellow',
     }
   ];
 
@@ -80,7 +77,7 @@ const BreakdownChart = () => {
             },
           },
         }}
-        colors={(datum) => datum.color}
+        colors={(datum) => datum.data.color}
         margin={
           { top: 40, right: 80, bottom: 80, left: 80 }
         }

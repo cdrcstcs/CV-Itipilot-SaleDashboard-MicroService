@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-const {Schema} = mongoose;
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
   imageId: { type: mongoose.Schema.Types.ObjectId, ref: 'Image' }, 
   name: String,
   email: {type:String, unique:true},
@@ -12,5 +11,5 @@ const UserSchema = new Schema({
   longtitude: Number,
   latitude: Number, 
 },{timestamps:true});
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.models.User || mongoose.model('User', UserSchema);
 export default User;

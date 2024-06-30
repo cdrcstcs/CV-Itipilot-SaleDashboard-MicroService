@@ -4,17 +4,19 @@ import mongoose from "mongoose";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import { calculateTotalSalesForBooking, getAllBookings } from "./controllers/booking";
-import { calculateTotalSalesForOrder, getAllOrders } from "./controllers/order";
-import { getGeography } from "./controllers/geography";
-import { getUser, getCustomers, getAdmins } from "./controllers/user";
+import Order from "./models/order.js";
+import Booking from "./models/booking.js";
+import { calculateTotalSalesForBooking, getAllBookings } from "./controllers/Booking.js";
+import { calculateTotalSalesForOrder, getAllOrders } from "./controllers/Order.js";
+import { getGeography } from "./controllers/Geography.js";
+import { getUser, getCustomers, getAdmins } from "./controllers/User.js";
 import jwt from "jsonwebtoken";
+import { bookings, orders } from "./data.js";
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
-async function verifyToken(req, res, next) {
+async function verifyToken(req, res) {
   try {
-
-    console.log(req.cookies.usertoken);
-      const token = req.cookies.usertoken;
+      console.log(req.body);
+      const token = req.body.token;
       if (!token) {
           throw new Error('No token provided');
       }
@@ -27,11 +29,9 @@ async function verifyToken(req, res, next) {
               }
           });
       });
-      req.user = userData;
-      console.log(req.user);
-      next(); 
+      res.status(200).json(userData);
   } catch (err) {
-      res.status(401).send(err.message || 'Unauthorized');
+      res.status(401).json(err.message || 'Unauthorized');
   }
 }
 
@@ -42,15 +42,25 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors());
+app.use(cors({
+    credentials: true,
+    origin: true,
+}));
 app.get("/bookings", calculateTotalSalesForBooking);
 app.get("/orders", calculateTotalSalesForOrder);
 app.get("/geography", getGeography);
-app.get("/user", verifyToken, getUser);
+app.get("/user/:id", getUser);
+app.post("/token", verifyToken);
 app.get("/admins", getAdmins);
 app.get("/customers", getCustomers);
 app.get("/blist",getAllBookings);
 app.get("/olist",getAllOrders);
 const PORT = 9000;
 const MONGO_URL = "mongodb://localhost:27017/mongo-golang";
-mongoose.connect(MONGO_URL).then(() => { app.listen(PORT, () => console.log(`Server Port: ${PORT}`)); }).catch((error) => console.log(`${error} did not connect`));
+mongoose.connect(MONGO_URL).then(async () => {
+    await Booking.deleteMany(); // Clear existing data
+    await Order.deleteMany(); // Clear existing data
+    await Booking.insertMany(bookings);
+    await Order.insertMany(orders);
+    app.listen(PORT, () => console.log(`Server running on PORT: ${PORT}`));
+  }).catch((error) => console.log(`${error} did not connect`));

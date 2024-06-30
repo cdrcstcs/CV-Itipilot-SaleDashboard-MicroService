@@ -12,17 +12,6 @@ import {
 } from "@mui/material";
 import Header from "components/Header";
 import { useGetOrderListQuery } from "state/api";
-import React, { useState } from "react";
-import {
-  Box,
-  Card,
-  CardActions,
-  CardContent,
-  Collapse,
-  Button,
-  Typography,
-  useTheme,
-} from "@mui/material";
 
 const Order = ({
   _id,
