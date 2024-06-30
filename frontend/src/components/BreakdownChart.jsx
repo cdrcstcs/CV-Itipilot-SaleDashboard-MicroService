@@ -1,9 +1,9 @@
 import React from "react";
 import { ResponsivePie } from "@nivo/pie";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { useGetBookingsQuery, useGetOrdersQuery } from "state/api";
 
-const BreakdownChart = ({ isDashboard }) => {
+const BreakdownChart = () => {
   const theme = useTheme();
   const { bookings } = useGetBookingsQuery();
   const { orders } = useGetOrdersQuery();
@@ -39,10 +39,10 @@ const BreakdownChart = ({ isDashboard }) => {
 
   return (
     <Box
-      height={isDashboard ? "400px" : "100%"}
+      height="100%"
       width={undefined}
-      minHeight={isDashboard ? "325px" : undefined}
-      minWidth={isDashboard ? "325px" : undefined}
+      minHeight={undefined}
+      minWidth={undefined}
       position="relative"
     >
       <ResponsivePie
@@ -82,9 +82,7 @@ const BreakdownChart = ({ isDashboard }) => {
         }}
         colors={(datum) => datum.color}
         margin={
-          isDashboard
-            ? { top: 40, right: 80, bottom: 100, left: 50 }
-            : { top: 40, right: 80, bottom: 80, left: 80 }
+          { top: 40, right: 80, bottom: 80, left: 80 }
         }
         sortByValue={true}
         innerRadius={0.45}
@@ -94,7 +92,6 @@ const BreakdownChart = ({ isDashboard }) => {
           from: "color",
           modifiers: [["darker", 0.2]],
         }}
-        enableArcLinkLabels={!isDashboard}
         arcLinkLabelsTextColor={theme.palette.secondary[200]}
         arcLinkLabelsThickness={2}
         arcLinkLabelsColor={{ from: "color" }}
@@ -108,8 +105,8 @@ const BreakdownChart = ({ isDashboard }) => {
             anchor: "bottom",
             direction: "row",
             justify: false,
-            translateX: isDashboard ? 20 : 0,
-            translateY: isDashboard ? 50 : 56,
+            translateX: 0,
+            translateY: 56,
             itemsSpacing: 0,
             itemWidth: 85,
             itemHeight: 18,
@@ -129,25 +126,6 @@ const BreakdownChart = ({ isDashboard }) => {
           },
         ]}
       />
-      <Box
-        position="absolute"
-        top="50%"
-        left="50%"
-        color={theme.palette.secondary[400]}
-        textAlign="center"
-        pointerEvents="none"
-        sx={{
-          transform: isDashboard
-            ? "translate(-75%, -170%)"
-            : "translate(-50%, -100%)",
-        }}
-      >
-        <Typography variant="h6">
-          {!isDashboard && "Total:"} {/* Ensure data.yearlySalesTotal is defined */}
-          {/* Replace data.yearlySalesTotal with correct variable */}
-          ${data.yearlySalesTotal}
-        </Typography>
-      </Box>
     </Box>
   );
 };
