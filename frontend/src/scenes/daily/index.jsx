@@ -4,20 +4,22 @@ import Header from "components/Header";
 import { ResponsiveLine } from "@nivo/line";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useGetBookingsQuery } from "state/api";
-import { useGetOrdersQuery } from "state/api";
-
+import { useSumContext } from "UpdateSumContext";
+import { usePostBookingsMutation, usePostOrdersMutation } from "state/api";
 
 const Daily = () => {
-  const [startDate, setStartDate] = useState( new Date("2021-02-01"));
+  const [startDate, setStartDate] = useState(new Date("2021-02-01"));
   const [endDate, setEndDate] = useState(new Date("2021-03-01"));
   const theme = useTheme();
-  const { data: cumSumB } = useGetBookingsQuery();
-  const { data: cumSumO } = useGetOrdersQuery();
+  const { sumForBooking, sumForOrder } = useSumContext();
+  const [postBookings] = usePostBookingsMutation();
+  const [postOrders] = usePostOrdersMutation();
   const [formattedData, setFormattedData] = useState(null);
 
   useEffect(() => {
-    if (cumSumB && cumSumO) {
+    const fetchData = async () => {
+      if (!sumForBooking || !sumForOrder) return;
+
       const totalSalesLineForBookings = {
         id: "Booking",
         color: theme.palette.secondary.main,
@@ -32,14 +34,40 @@ const Daily = () => {
       let currentDate = new Date(startDate);
       const end = new Date(endDate);
       while (currentDate <= end) {
-        totalSalesLineForBookings.data.push({ x: currentDate.getDate(), y: sumOfSales(startDate, currentDate, { cumSumB }) });
-        totalSalesLineForOrders.data.push({ x: currentDate.getDate(), y: sumOfSales(startDate, currentDate, { cumSumO }) });
+        try {
+          const bookingResult = await postBookings({
+            startDate: startDate,
+            endDate: currentDate,
+            cumSum: sumForBooking,
+          });
+          const orderResult = await postOrders({
+            startDate: startDate,
+            endDate: currentDate,
+            cumSum: sumForOrder,
+          });
+
+          totalSalesLineForBookings.data.push({
+            x: currentDate.getDate(),
+            y: bookingResult.data, // Assuming bookingResult contains the data you need
+          });
+          totalSalesLineForOrders.data.push({
+            x: currentDate.getDate(),
+            y: orderResult.data, // Assuming orderResult contains the data you need
+          });
+
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          // Handle error as needed
+        }
+
         currentDate.setDate(currentDate.getDate() + 1);
       }
 
       setFormattedData([totalSalesLineForBookings, totalSalesLineForOrders]);
-    }
-  }, [cumSumB, cumSumO, startDate, endDate, theme.palette.secondary.main, theme.palette.primary.main]);
+    };
+
+    fetchData();
+  }, [startDate, endDate, sumForBooking, sumForOrder, theme.palette.secondary.main, theme.palette.primary.main, postBookings, postOrders]);
 
   return (
     <Box m="1.5rem 2.5rem">
@@ -177,4 +205,5 @@ const Daily = () => {
     </Box>
   );
 };
+
 export default Daily;

@@ -4,48 +4,22 @@ import Header from "components/Header";
 import { ResponsiveLine } from "@nivo/line";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useGetBookingsQuery } from "state/api";
-import { useGetOrdersQuery } from "state/api";
+import { useSumContext } from "UpdateSumContext";
+import { usePostBookingsMutation, usePostOrdersMutation } from "state/api";
 
-function sumOfSales(startDate, endDate, totals) {
-  const { cumSumB } = totals;
-  const startYear = startDate.getFullYear();
-  const startMonth = String(startDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
-  const startDay = String(startDate.getDate()).padStart(2, '0'); 
-  const endYear = endDate.getFullYear();
-  const endMonth = String(endDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
-  const endDay = String(endDate.getDate()).padStart(2, '0'); 
-  let sum = 0;
-
-  if (cumSumB && cumSumB[endYear] && cumSumB[endYear][endMonth] && cumSumB[endYear][endMonth][endDay]) {
-    sum = cumSumB[endYear][endMonth][endDay];
-  }
-
-  if (startDay > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth] && cumSumB[startYear][startMonth][startDay - 1]) {
-    sum -= cumSumB[startYear][startMonth][startDay - 1];
-  }
-
-  if (startMonth > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth - 1] && cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1]) {
-    sum -= cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1];
-  }
-
-  if (startYear > 0 && cumSumB && cumSumB[startYear - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1]) {
-    sum -= cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1];
-  }
-
-  return sum;
-}
-
-const Daily = () => {
-  const [startDate, setStartDate] = useState( new Date("2021-02-01"));
+const Monthly = () => {
+  const [startDate, setStartDate] = useState(new Date("2021-02-01"));
   const [endDate, setEndDate] = useState(new Date("2021-03-01"));
   const theme = useTheme();
-  const { data: cumSumB } = useGetBookingsQuery();
-  const { data: cumSumO } = useGetOrdersQuery();
+  const { sumForBooking, sumForOrder } = useSumContext();
+  const [postBookings] = usePostBookingsMutation();
+  const [postOrders] = usePostOrdersMutation();
   const [formattedData, setFormattedData] = useState(null);
 
   useEffect(() => {
-    if (cumSumB && cumSumO) {
+    const fetchData = async () => {
+      if (!sumForBooking || !sumForOrder) return;
+
       const totalSalesLineForBookings = {
         id: "Booking",
         color: theme.palette.secondary.main,
@@ -60,18 +34,44 @@ const Daily = () => {
       let currentDate = new Date(startDate);
       const end = new Date(endDate);
       while (currentDate <= end) {
-        totalSalesLineForBookings.data.push({ x: currentDate.getMonth()+1, y: sumOfSales(startDate, currentDate, { cumSumB }) });
-        totalSalesLineForOrders.data.push({ x: currentDate.getMonth()+1, y: sumOfSales(startDate, currentDate, { cumSumO }) });
+        try {
+          const bookingResult = await postBookings({
+            startDate: startDate,
+            endDate: currentDate,
+            cumSum: sumForBooking,
+          });
+          const orderResult = await postOrders({
+            startDate: startDate,
+            endDate: currentDate,
+            cumSum: sumForOrder,
+          });
+
+          totalSalesLineForBookings.data.push({
+            x: currentDate.getDate(),
+            y: bookingResult.data, // Assuming bookingResult contains the data you need
+          });
+          totalSalesLineForOrders.data.push({
+            x: currentDate.getDate(),
+            y: orderResult.data, // Assuming orderResult contains the data you need
+          });
+
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          // Handle error as needed
+        }
+
         currentDate.setMonth(currentDate.getMonth() + 1);
       }
 
       setFormattedData([totalSalesLineForBookings, totalSalesLineForOrders]);
-    }
-  }, [cumSumB, cumSumO, startDate, endDate, theme.palette.secondary.main, theme.palette.primary.main]);
+    };
+
+    fetchData();
+  }, [startDate, endDate, sumForBooking, sumForOrder, theme.palette.secondary.main, theme.palette.primary.main, postBookings, postOrders]);
 
   return (
     <Box m="1.5rem 2.5rem">
-      <Header title="DAILY SALES" subtitle="Chart of daily sales" />
+      <Header title="Monthly SALES" subtitle="Chart of monthly sales" />
       <Box height="75vh">
         <Box display="flex" justifyContent="flex-end">
           <Box>
@@ -205,4 +205,5 @@ const Daily = () => {
     </Box>
   );
 };
-export default Daily;
+
+export default Monthly;
