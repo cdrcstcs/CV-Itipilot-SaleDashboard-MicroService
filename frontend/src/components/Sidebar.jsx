@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Box,
-  Divider,
   Drawer,
   IconButton,
   List,
@@ -13,13 +12,11 @@ import {
   useTheme,
 } from "@mui/material";
 import {
-  SettingsOutlined,
   ChevronLeft,
   ChevronRightOutlined,
   ShoppingCartOutlined,
   Groups2Outlined,
   PublicOutlined,
-  PointOfSaleOutlined,
   TodayOutlined,
   CalendarMonthOutlined,
   AdminPanelSettingsOutlined,

@@ -8,8 +8,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const Yearly = () => {
-  const [startYear, setStartYear] = useState(2021);
-  const [endYear, setEndYear] = useState(2021);
+  // const [startYear, setStartYear] = useState(2021);
+  // const [endYear, setEndYear] = useState(2021);
   const { data: bookings } = useGetBookingsQuery();
   const { data: orders } = useGetOrdersQuery();
   const theme = useTheme();
@@ -21,45 +21,45 @@ const Yearly = () => {
     const { yearlyData: yearlyOrders } = orders;
 
     const totalSalesLineForBookings = {
-      id: "totalBookingSales",
+      id: "Booking",
       color: theme.palette.secondary.main,
       data: [],
     };
 
     const totalSalesLineForOrders = {
-      id: "totalOrderSales",
-      color: theme.palette.primary.main,
+      id: "Order",
+      color: theme.palette.secondary.main,
       data: [],
     };
 
     Object.values(yearlyBookings).forEach(({ year, totalSales }) => {
-      if (year >= startYear && year <= endYear) {
-        totalSalesLineForBookings.data = [
-          ...totalSalesLineForBookings.data,
-          { x: year.toString(), y: totalSales },
-        ];
-      }
+      totalSalesLineForBookings.data = [
+        ...totalSalesLineForBookings.data,
+        { x: year.toString(), y: totalSales },
+      ];
+      // if (year >= startYear && year <= endYear) {
+      // }
     });
 
     Object.values(yearlyOrders).forEach(({ year, totalSales }) => {
-      if (year >= startYear && year <= endYear) {
-        totalSalesLineForOrders.data = [
-          ...totalSalesLineForOrders.data,
-          { x: year.toString(), y: totalSales },
-        ];
-      }
+      totalSalesLineForOrders.data = [
+        ...totalSalesLineForOrders.data,
+        { x: year.toString(), y: totalSales },
+      ];
+      // if (year >= startYear && year <= endYear) {
+      // }
     });
 
     const formattedData = [totalSalesLineForBookings, totalSalesLineForOrders];
     return [formattedData];
-  }, [bookings, orders, startYear, endYear, theme.palette.secondary.main, theme.palette.primary.main]);
+  }, [bookings, orders, theme.palette.secondary.main, theme.palette.primary.main]);
 
   return (
     <Box m="1.5rem 2.5rem">
       <Header title="YEARLY SALES" subtitle="Chart of yearly sales" />
       <Box height="75vh">
         <Box display="flex" justifyContent="flex-end">
-          <Box>
+          {/* <Box>
             <DatePicker
               selected={new Date(`${startYear}-01-01`)}
               onChange={(date) => setStartYear(date.getFullYear())}
@@ -80,7 +80,7 @@ const Yearly = () => {
               dateFormat="yyyy"
               showYearPicker
             />
-          </Box>
+          </Box> */}
         </Box>
 
         {(bookings && orders) ? (

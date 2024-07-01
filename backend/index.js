@@ -11,8 +11,9 @@ import { calculateTotalSalesForOrder, getAllOrders } from "./controllers/Order.j
 import { getGeography } from "./controllers/Geography.js";
 import { getUser, getCustomers, getAdmins } from "./controllers/User.js";
 import jwt from "jsonwebtoken";
-import { bookings, orders } from "./data.js";
+import { bookings, users, orders } from "./data.js";
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
+import User from "./models/User.js";
 async function verifyToken(req, res) {
   try {
       console.log(req.body);
@@ -60,7 +61,9 @@ const MONGO_URL = "mongodb://localhost:27017/mongo-golang";
 mongoose.connect(MONGO_URL).then(async () => {
     await Booking.deleteMany(); // Clear existing data
     await Order.deleteMany(); // Clear existing data
+    await User.deleteMany();
     await Booking.insertMany(bookings);
     await Order.insertMany(orders);
+    await User.insertMany(users);
     app.listen(PORT, () => console.log(`Server running on PORT: ${PORT}`));
   }).catch((error) => console.log(`${error} did not connect`));

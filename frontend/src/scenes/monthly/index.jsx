@@ -4,12 +4,12 @@ import Header from "components/Header";
 import { ResponsiveLine } from "@nivo/line";
 import { useGetBookingsQuery } from "state/api";
 import { useGetOrdersQuery } from "state/api";
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const Monthly = () => {
-  const [startDate, setStartDate] = useState(new Date("2021-01-01"));
-  const [endDate, setEndDate] = useState(new Date("2021-12-31"));
+  // const [startDate, setStartDate] = useState(new Date("2021-01-01"));
+  // const [endDate, setEndDate] = useState(new Date("2021-12-31"));
   const { data: bookings } = useGetBookingsQuery();
   const { data: orders } = useGetOrdersQuery();
   const theme = useTheme();
@@ -21,49 +21,49 @@ const Monthly = () => {
     const { monthlyData: monthlyOrders } = orders;
 
     const totalSalesLineForBookings = {
-      id: "totalBookingSales",
+      id: "Booking",
       color: theme.palette.secondary.main,
       data: [],
     };
 
     const totalSalesLineForOrders = {
-      id: "totalOrderSales",
-      color: theme.palette.primary.main,
+      id: "Order",
+      color: theme.palette.secondary.main,
       data: [],
     };
 
     Object.values(monthlyBookings).forEach(({ month, totalSales }) => {
-      const dateFormatted = new Date(month);
-      if (dateFormatted >= startDate && dateFormatted <= endDate) {
-        const splitDate = month.substring(month.indexOf("-") + 1);
-        totalSalesLineForBookings.data = [
-          ...totalSalesLineForBookings.data,
-          { x: splitDate, y: totalSales },
-        ];
-      }
+      // const dateFormatted = new Date(month);
+      const splitDate = month.substring(month.indexOf("-") + 1);
+      totalSalesLineForBookings.data = [
+        ...totalSalesLineForBookings.data,
+        { x: splitDate, y: totalSales },
+      ];
+      // if (dateFormatted >= startDate && dateFormatted <= endDate) {
+      // }
     });
 
     Object.values(monthlyOrders).forEach(({ month, totalSales }) => {
-      const dateFormatted = new Date(month);
-      if (dateFormatted >= startDate && dateFormatted <= endDate) {
-        const splitDate = month.substring(month.indexOf("-") + 1);
-        totalSalesLineForOrders.data = [
-          ...totalSalesLineForOrders.data,
-          { x: splitDate, y: totalSales },
-        ];
-      }
+      // const dateFormatted = new Date(month);
+      const splitDate = month.substring(month.indexOf("-") + 1);
+      totalSalesLineForOrders.data = [
+        ...totalSalesLineForOrders.data,
+        { x: splitDate, y: totalSales },
+      ];
+      // if (dateFormatted >= startDate && dateFormatted <= endDate) {
+      // }
     });
 
     const formattedData = [totalSalesLineForBookings, totalSalesLineForOrders];
     return [formattedData];
-  }, [bookings, orders, startDate, endDate, theme.palette.secondary.main, theme.palette.primary.main]);
+  }, [bookings, orders, theme.palette.secondary.main, theme.palette.primary.main]);
 
   return (
     <Box m="1.5rem 2.5rem">
       <Header title="MONTHLY SALES" subtitle="Chart of monthly sales" />
       <Box height="75vh">
         <Box display="flex" justifyContent="flex-end">
-          <Box>
+          {/* <Box>
             <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
@@ -85,7 +85,7 @@ const Monthly = () => {
               dateFormat="MM/yyyy"
               showMonthYearPicker
             />
-          </Box>
+          </Box> */}
         </Box>
 
         {(bookings && orders) ? (

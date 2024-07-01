@@ -44,9 +44,9 @@ function App() {
     fetchUserData();
   }, []);
   const {data} = useGetUserQuery(userData);
-  if(!data){
-    return null;
-  }
+  // if(!data){
+  //   return null;
+  // }
   return (
     <div className="app">
       <BrowserRouter>
