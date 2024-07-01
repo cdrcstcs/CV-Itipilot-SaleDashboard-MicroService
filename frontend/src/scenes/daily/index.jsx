@@ -7,34 +7,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useGetBookingsQuery } from "state/api";
 import { useGetOrdersQuery } from "state/api";
 
-function sumOfSales(startDate, endDate, totals) {
-  const { cumSumB } = totals;
-  const startYear = startDate.getFullYear();
-  const startMonth = String(startDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
-  const startDay = String(startDate.getDate()).padStart(2, '0'); 
-  const endYear = endDate.getFullYear();
-  const endMonth = String(endDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
-  const endDay = String(endDate.getDate()).padStart(2, '0'); 
-  let sum = 0;
-
-  if (cumSumB && cumSumB[endYear] && cumSumB[endYear][endMonth] && cumSumB[endYear][endMonth][endDay]) {
-    sum = cumSumB[endYear][endMonth][endDay];
-  }
-
-  if (startDay > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth] && cumSumB[startYear][startMonth][startDay - 1]) {
-    sum -= cumSumB[startYear][startMonth][startDay - 1];
-  }
-
-  if (startMonth > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth - 1] && cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1]) {
-    sum -= cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1];
-  }
-
-  if (startYear > 0 && cumSumB && cumSumB[startYear - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1]) {
-    sum -= cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1];
-  }
-
-  return sum;
-}
 
 const Daily = () => {
   const [startDate, setStartDate] = useState( new Date("2021-02-01"));

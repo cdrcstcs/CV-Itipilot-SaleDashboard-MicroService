@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:9000'}),
   reducerPath: "adminApi",
@@ -6,6 +7,8 @@ export const api = createApi({
     "User",
     "Bookings",
     "Orders",
+    "Bsum",
+    "Osum",
     "Customers",
     "Blist",
     "Olist",
@@ -14,16 +17,30 @@ export const api = createApi({
   ],
   endpoints: (build) => ({
     getUser: build.query({
-      query: (id) => `/user/${id}`,
+      query: (id) => `/user/${id}`, // Ensure template string is properly quoted
       providesTags: ["User"],
     }),
-    getBookings: build.query({
-      query: () => "/bookings",
-      providesTags: ["Bookings"],
+    postBookings: build.mutation({
+      query: () => ({
+        url: "/bookings",
+        method: 'POST',
+      }),
+      invalidatesTags: ["Bookings"],
     }),
-    getOrders: build.query({
-      query: () => "/orders",
-      providesTags: ["Orders"],
+    postOrders: build.mutation({
+      query: () => ({
+        url: "/orders",
+        method: 'POST',
+      }),
+      invalidatesTags: ["Orders"],
+    }),
+    getBookingSum: build.query({
+      query: () => "/bsum",
+      providesTags: ["Bsum"],
+    }),
+    getOrderSum: build.query({
+      query: () => "/osum",
+      providesTags: ["Osum"],
     }),
     getBookingList: build.query({
       query: () => "/blist",
@@ -49,8 +66,10 @@ export const api = createApi({
 });
 export const {
   useGetUserQuery,
-  useGetBookingsQuery,
-  useGetOrdersQuery,
+  usePostBookingsMutation,
+  usePostOrdersMutation,
+  useGetBookingSumQuery,
+  useGetOrderSumQuery,
   useGetBookingListQuery,
   useGetOrderListQuery,
   useGetCustomersQuery,

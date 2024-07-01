@@ -52,10 +52,6 @@ const navItems = [
     icon: <CalendarMonthOutlined />,
   },
   {
-    text: "Yearly",
-    icon: <CalendarMonthOutlined />,
-  },
-  {
     text: "Breakdown",
     icon: <PieChartOutlined />,
   },
