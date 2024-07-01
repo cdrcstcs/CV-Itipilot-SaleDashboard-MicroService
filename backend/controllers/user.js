@@ -1,4 +1,4 @@
-import User from "../models/User.js"
+import User from "../models/User";
 export const getUser = async (req, res) => {
   const {id} = req.params;
   console.log(id);
@@ -17,7 +17,7 @@ export const getUser = async (req, res) => {
 };
 export const getCustomers = async (req, res) => {
   try {
-    const customers = await User.find({ userType: "USER" }).select("-password");
+    const customers = await User.find({ userType: "User" }).select("-password");
     res.status(200).json(customers);
   } catch (error) {
     res.status(404).json({ message: error.message });

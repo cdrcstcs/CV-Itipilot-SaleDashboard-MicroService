@@ -1,6 +1,4 @@
-import Order from '../models/order.js';
-import GeneralStat from '../models/GeneralStat.js'; // Adjust the path as per your file structure
-
+import Order from "../models/order.js";
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find();
@@ -10,65 +8,66 @@ export const getAllOrders = async (req, res) => {
     res.status(500).json({ message: "something went wrong" });
   }
 };
-export const calculateTotalSalesForOrder = async (req, res) => {
-  try {
+function preprocessSales(sales) {
+    sales = Object.keys(sales).sort();
+    const startDate = new Date('2020-01-01');
+    const endDate = new Date();
+    const cumSum = [];
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const day = currentDate.getDate();
+        const dateString = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        if (!sales[dateString]) {
+        sales[dateString] = 0;
+        }
+        if (!cumSum[year]) {
+        cumSum[year] = [];
+        }
+        if (!cumSum[year][month]) {
+        cumSum[year][month] = [];
+        }
+        cumSum[year][month][day] = sales[dateString] ? sales[dateString] : 0;
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    for (let year = 0; year < cumSum.length; year++) {
+        if (!cumSum[year]) continue;
+        for (let month = 0; month < cumSum[year].length; month++) {
+        if (!cumSum[year][month]) continue;
+        for (let day = 1; day < cumSum[year][month].length; day++) {
+            if (!cumSum[year][month][day]) continue;
+            cumSum[year][month][day] += cumSum[year][month][day - 1];
+        }
+        }
+    }
+    return cumSum;
+}
+function sumOfSales(startDate, endDate, totals) {
+    const { cumSum } = totals;
+    const [startYear, startMonth, startDay] = startDate.split('-').map(Number);
+    const [endYear, endMonth, endDay] = endDate.split('-').map(Number);
+    const sum = cumSum[endYear][endMonth][endDay];
+    if (startDay > 0) {
+        sum -= cumSum[startYear][startMonth][startDay - 1];
+    }
+    if (startMonth > 0) {
+        sum -= cumSum[startYear][startMonth - 1][cumSum[startYear][startMonth - 1].length - 1];
+    }
+    if (startYear > 0) {
+        sum -= cumSum[startYear - 1][cumSum[startYear - 1].length - 1][cumSum[startYear - 1][cumSum[startYear - 1].length - 1].length - 1];
+    }
+    return sum;
+}
+export const calculateTotalSalesForOrder = async (req,res) =>{
+    const salesData = {};
     const orders = await Order.find();
-    
-    // Initialize objects to store totals
-    const years = {};
-    const months = {};
-    const days = {};
-    const yearArray = [];
-    const monthArray = [];
-    const dayArray = [];
-    
-    // Calculate totals by year, month, and day
-    orders.forEach(order => {
-      const orderDate = new Date(order.createdAt);
-      const year = orderDate.getFullYear();
-      const month = orderDate.getMonth() + 1; // getMonth() returns 0-based index
-      const day = orderDate.getDate();
-      
-      // Ensure unique years, months, and days
-      if (!years[year]) {
-        years[year] = 0;
-        yearArray.push(year);
-      }
-      if (!months[month]) {
-        months[month] = 0;
-        monthArray.push(month);
-      }
-      if (!days[day]) {
-        days[day] = 0;
-        dayArray.push(day);
-      }
-      
-      // Accumulate total sales
-      years[year] += order.totalAmount; // Assuming order.totalAmount is the attribute for total sales
-      months[month] += order.totalAmount;
-      days[day] += order.totalAmount;
-    });
-
-    // Create GeneralStat document
-    const stat = await GeneralStat.create({
-      yearlyData: yearArray.map(y => ({
-        year: y,
-        totalSales: years[y]
-      })),
-      monthlyData: monthArray.map(m => ({
-        month: m.toString(),
-        totalSales: months[m]
-      })),
-      dailyData: dayArray.map(d => ({
-        date: d.toString(),
-        totalSales: days[d]
-      }))
-    });
-
-    // Respond with created GeneralStat document
-    res.status(200).json(stat);
-  } catch (error) {
-    console.error('Error calculating total sales:', error);
-    res.status(500).json({ message: 'Failed to calculate total sales.' });
-  }
-};
+    orders.forEach((order)=> {
+        salesData[order.createdAt] = salesData[order.createdAt] ? salesData[order.createdAt] + order.totalAmount : 0; 
+    })
+    const cumSum = preprocessSales(salesData);
+    const startDate = req.params.startDate;
+    const endDate = req.params.endDate;
+    const total = sumOfSales(startDate, endDate, { cumSum });
+    res.status(200).json(total);
+}

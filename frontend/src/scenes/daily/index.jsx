@@ -8,16 +8,10 @@ import { useGetOrdersQuery } from "state/api";
 import "react-datepicker/dist/react-datepicker.css";
 
 const Daily = () => {
-  // const [startDate, setStartDate] = useState(new Date("2021-02-01"));
-  // const [endDate, setEndDate] = useState(new Date("2021-03-01"));
-  const { data: bookings} = useGetBookingsQuery();
-  const { data: orders } = useGetOrdersQuery();
+  const [startDate, setStartDate] = useState(new Date("2021-02-01"));
+  const [endDate, setEndDate] = useState(new Date("2021-03-01"));
   const theme = useTheme();
   const [formattedData] = useMemo(() => {
-    if (!bookings || !orders) return [];
-    const { dailyData : dailyBookings } = bookings;
-    const { dailyData : dailyOrders } = orders; 
-    console.log(dailyBookings);
     const totalSalesLineForBookings = {
       id: "Booking",
       color: theme.palette.secondary.main,
@@ -28,38 +22,26 @@ const Daily = () => {
       color: theme.palette.secondary.main,
       data: [],
     };
-    Object.values(dailyBookings).forEach(({ date, totalSales }) => {
-      // const dateFormatted = new Date(date);
-      const splitDate = date.substring(date.indexOf("-") + 1);
-      totalSalesLineForBookings.data = [
-        ...totalSalesLineForBookings.data,
-        { x: splitDate, y: totalSales },
-      ];
-      // if (dateFormatted >= startDate && dateFormatted <= endDate) {
-      // }
-    });
-    Object.values(dailyOrders).forEach(({ date, totalSales }) => {
-      // const dateFormatted = new Date(date);
-      const splitDate = date.substring(date.indexOf("-") + 1);
-      totalSalesLineForOrders.data = [
-        ...totalSalesLineForOrders.data,
-        { x: splitDate, y: totalSales },
-      ];
-      // if (dateFormatted >= startDate && dateFormatted <= endDate) {
-      // }
-    });
+    let currentDate = startDate;
+    while (currentDate <= endDate) {
+      const {data: totalB} = useGetBookingsQuery(startDate, currentDate);
+      totalSalesLineForBookings.data.push({x:currentDate, y: totalB});
+      const {data: totalO} = useGetOrdersQuery(startDate, currentDate);
+      totalSalesLineForOrders.data.push({x:currentDate, y: totalO});
+      currentDate.setDate(currentDate.getDate() + 1); 
+    }  
     const formattedData = [totalSalesLineForBookings, totalSalesLineForOrders];
     return [formattedData];
-  }, [bookings, orders, theme.palette.secondary.main, theme.palette.primary.main]);
+  }, [startDate, endDate]);
   return (
     <Box m="1.5rem 2.5rem">
       <Header title="DAILY SALES" subtitle="Chart of daily sales" />
       <Box height="75vh">
         <Box display="flex" justifyContent="flex-end">
-          {/* <Box>
+          <Box>
             <DatePicker
               selected={startDate}
-              // onChange={(date) => setStartDate(date)}
+              onChange={(date) => setStartDate(date)}
               selectsStart
               startDate={startDate}
               endDate={endDate}
@@ -68,13 +50,13 @@ const Daily = () => {
           <Box>
             <DatePicker
               selected={endDate}
-              // onChange={(date) => setEndDate(date)}
+              onChange={(date) => setEndDate(date)}
               selectsEnd
               startDate={startDate}
               endDate={endDate}
               minDate={startDate}
             />
-          </Box> */}
+          </Box>
         </Box>
 
         {(bookings && orders) ? (

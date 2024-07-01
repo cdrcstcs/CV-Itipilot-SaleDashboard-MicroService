@@ -6,7 +6,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import Order from "./models/order.js";
 import Booking from "./models/booking.js";
-import { calculateTotalSalesForBooking, getAllBookings } from "./controllers/Booking.js";
+import { calculateTotalSalesForBooking, getAllBookings } from "./controllers/booking.js";
 import { calculateTotalSalesForOrder, getAllOrders } from "./controllers/Order.js";
 import { getGeography } from "./controllers/Geography.js";
 import { getUser, getCustomers, getAdmins } from "./controllers/User.js";
@@ -47,8 +47,8 @@ app.use(cors({
     credentials: true,
     origin: true,
 }));
-app.get("/bookings", calculateTotalSalesForBooking);
-app.get("/orders", calculateTotalSalesForOrder);
+app.get("/bookings/:startDate/:endDate", calculateTotalSalesForBooking);
+app.get("/orders/:startDate/:endDate", calculateTotalSalesForOrder);
 app.get("/geography", getGeography);
 app.get("/user/:id", getUser);
 app.post("/token", verifyToken);
