@@ -18,11 +18,11 @@ export const api = createApi({
       providesTags: ["User"],
     }),
     getBookings: build.query({
-      query: (startDate, endDate) => `/bookings/${startDate}/${endDate}`,
+      query: () => "/bookings",
       providesTags: ["Bookings"],
     }),
     getOrders: build.query({
-      query: (startDate, endDate) => `/orders/${startDate}/${endDate}`,
+      query: () => "/orders",
       providesTags: ["Orders"],
     }),
     getBookingList: build.query({

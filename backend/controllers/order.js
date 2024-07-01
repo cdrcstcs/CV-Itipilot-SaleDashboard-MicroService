@@ -43,22 +43,6 @@ function preprocessSales(sales) {
     }
     return cumSum;
 }
-function sumOfSales(startDate, endDate, totals) {
-    const { cumSum } = totals;
-    const [startYear, startMonth, startDay] = startDate.split('-').map(Number);
-    const [endYear, endMonth, endDay] = endDate.split('-').map(Number);
-    const sum = cumSum[endYear][endMonth][endDay];
-    if (startDay > 0) {
-        sum -= cumSum[startYear][startMonth][startDay - 1];
-    }
-    if (startMonth > 0) {
-        sum -= cumSum[startYear][startMonth - 1][cumSum[startYear][startMonth - 1].length - 1];
-    }
-    if (startYear > 0) {
-        sum -= cumSum[startYear - 1][cumSum[startYear - 1].length - 1][cumSum[startYear - 1][cumSum[startYear - 1].length - 1].length - 1];
-    }
-    return sum;
-}
 export const calculateTotalSalesForOrder = async (req,res) =>{
     const salesData = {};
     const orders = await Order.find();
@@ -66,8 +50,5 @@ export const calculateTotalSalesForOrder = async (req,res) =>{
         salesData[order.createdAt] = salesData[order.createdAt] ? salesData[order.createdAt] + order.totalAmount : 0; 
     })
     const cumSum = preprocessSales(salesData);
-    const startDate = req.params.startDate;
-    const endDate = req.params.endDate;
-    const total = sumOfSales(startDate, endDate, { cumSum });
-    res.status(200).json(total);
+    res.status(200).json(cumSum);
 }

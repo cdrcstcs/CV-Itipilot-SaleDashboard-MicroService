@@ -1,38 +1,74 @@
-import React, { useMemo, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, useTheme } from "@mui/material";
 import Header from "components/Header";
 import { ResponsiveLine } from "@nivo/line";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useGetBookingsQuery } from "state/api";
 import { useGetOrdersQuery } from "state/api";
-// import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+
+function sumOfSales(startDate, endDate, totals) {
+  const { cumSumB } = totals;
+  const startYear = startDate.getFullYear();
+  const startMonth = String(startDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
+  const startDay = String(startDate.getDate()).padStart(2, '0'); 
+  const endYear = endDate.getFullYear();
+  const endMonth = String(endDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
+  const endDay = String(endDate.getDate()).padStart(2, '0'); 
+  let sum = 0;
+
+  if (cumSumB && cumSumB[endYear] && cumSumB[endYear][endMonth] && cumSumB[endYear][endMonth][endDay]) {
+    sum = cumSumB[endYear][endMonth][endDay];
+  }
+
+  if (startDay > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth] && cumSumB[startYear][startMonth][startDay - 1]) {
+    sum -= cumSumB[startYear][startMonth][startDay - 1];
+  }
+
+  if (startMonth > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth - 1] && cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1]) {
+    sum -= cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1];
+  }
+
+  if (startYear > 0 && cumSumB && cumSumB[startYear - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1]) {
+    sum -= cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1];
+  }
+
+  return sum;
+}
 
 const Daily = () => {
-  const [startDate, setStartDate] = useState(new Date("2021-02-01"));
+  const [startDate, setStartDate] = useState( new Date("2021-02-01"));
   const [endDate, setEndDate] = useState(new Date("2021-03-01"));
   const theme = useTheme();
-  const [formattedData] = useMemo(() => {
-    const totalSalesLineForBookings = {
-      id: "Booking",
-      color: theme.palette.secondary.main,
-      data: [],
-    };
-    const totalSalesLineForOrders = {
-      id: "Order",
-      color: theme.palette.secondary.main,
-      data: [],
-    };
-    let currentDate = startDate;
-    while (currentDate <= endDate) {
-      const {data: totalB} = useGetBookingsQuery(startDate, currentDate);
-      totalSalesLineForBookings.data.push({x:currentDate, y: totalB});
-      const {data: totalO} = useGetOrdersQuery(startDate, currentDate);
-      totalSalesLineForOrders.data.push({x:currentDate, y: totalO});
-      currentDate.setDate(currentDate.getDate() + 1); 
-    }  
-    const formattedData = [totalSalesLineForBookings, totalSalesLineForOrders];
-    return [formattedData];
-  }, [startDate, endDate]);
+  const { data: cumSumB } = useGetBookingsQuery();
+  const { data: cumSumO } = useGetOrdersQuery();
+  const [formattedData, setFormattedData] = useState(null);
+
+  useEffect(() => {
+    if (cumSumB && cumSumO) {
+      const totalSalesLineForBookings = {
+        id: "Booking",
+        color: theme.palette.secondary.main,
+        data: [],
+      };
+      const totalSalesLineForOrders = {
+        id: "Order",
+        color: theme.palette.primary.main,
+        data: [],
+      };
+
+      let currentDate = new Date(startDate);
+      const end = new Date(endDate);
+      while (currentDate <= end) {
+        totalSalesLineForBookings.data.push({ x: currentDate.getDate(), y: sumOfSales(startDate, currentDate, { cumSumB }) });
+        totalSalesLineForOrders.data.push({ x: currentDate.getDate(), y: sumOfSales(startDate, currentDate, { cumSumO }) });
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      setFormattedData([totalSalesLineForBookings, totalSalesLineForOrders]);
+    }
+  }, [cumSumB, cumSumO, startDate, endDate, theme.palette.secondary.main, theme.palette.primary.main]);
+
   return (
     <Box m="1.5rem 2.5rem">
       <Header title="DAILY SALES" subtitle="Chart of daily sales" />
@@ -59,7 +95,7 @@ const Daily = () => {
           </Box>
         </Box>
 
-        {(bookings && orders) ? (
+        {formattedData ? (
           <ResponsiveLine
             data={formattedData}
             theme={{
@@ -169,5 +205,4 @@ const Daily = () => {
     </Box>
   );
 };
-
 export default Daily;

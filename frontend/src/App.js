@@ -24,26 +24,26 @@ function getCookie(name) {
 function App() {
   const mode = 'dark';
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
-  const [userData, setUserData] = useState(null);
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = getCookie('usertoken');
-        if (!token) {
-          throw new Error('User token not found');
-        }
+  // const [userData, setUserData] = useState(null);
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const token = getCookie('usertoken');
+  //       if (!token) {
+  //         throw new Error('User token not found');
+  //       }
 
-        const res = await axios.post('http://localhost:9000/token', {token});
-        setUserData(res.data.userId);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setUserData(null);
-      }
-    };
+  //       const res = await axios.post('http://localhost:9000/token', {token});
+  //       setUserData(res.data.userId);
+  //     } catch (error) {
+  //       console.error('Error fetching user data:', error);
+  //       setUserData(null);
+  //     }
+  //   };
 
-    fetchUserData();
-  }, []);
-  const {data} = useGetUserQuery(userData);
+  //   fetchUserData();
+  // }, []);
+  // const {data} = useGetUserQuery(userData);
   // if(!data){
   //   return null;
   // }

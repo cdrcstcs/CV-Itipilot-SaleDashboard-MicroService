@@ -47,8 +47,8 @@ app.use(cors({
     credentials: true,
     origin: true,
 }));
-app.get("/bookings/:startDate/:endDate", calculateTotalSalesForBooking);
-app.get("/orders/:startDate/:endDate", calculateTotalSalesForOrder);
+app.get("/bookings", calculateTotalSalesForBooking);
+app.get("/orders", calculateTotalSalesForOrder);
 app.get("/geography", getGeography);
 app.get("/user/:id", getUser);
 app.post("/token", verifyToken);

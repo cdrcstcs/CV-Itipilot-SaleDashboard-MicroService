@@ -2,37 +2,61 @@ import React from "react";
 import { ResponsivePie } from "@nivo/pie";
 import { Box, useTheme } from "@mui/material";
 import { useGetBookingsQuery, useGetOrdersQuery } from "state/api";
+import { useState, useEffect } from "react";
+
+function sumOfSales(startDate, endDate, totals) {
+  const { cumSumB } = totals;
+  const startYear = startDate.getFullYear();
+  const startMonth = String(startDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
+  const startDay = String(startDate.getDate()).padStart(2, '0'); 
+  const endYear = endDate.getFullYear();
+  const endMonth = String(endDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
+  const endDay = String(endDate.getDate()).padStart(2, '0'); 
+  let sum = 0;
+
+  if (cumSumB && cumSumB[endYear] && cumSumB[endYear][endMonth] && cumSumB[endYear][endMonth][endDay]) {
+    sum = cumSumB[endYear][endMonth][endDay];
+  }
+
+  if (startDay > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth] && cumSumB[startYear][startMonth][startDay - 1]) {
+    sum -= cumSumB[startYear][startMonth][startDay - 1];
+  }
+
+  if (startMonth > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth - 1] && cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1]) {
+    sum -= cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1];
+  }
+
+  if (startYear > 0 && cumSumB && cumSumB[startYear - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1]) {
+    sum -= cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1];
+  }
+
+  return sum;
+}
 
 const BreakdownChart = () => {
   const theme = useTheme();
-  const { data: bookings } = useGetBookingsQuery();
-  const { data: orders } = useGetOrdersQuery();
-  if (!bookings || !orders) return "Loading...";
-  let totalSalesForBookings = Object.values(bookings).reduce((acc, timeType) => {
-    return acc + Object.values(timeType).reduce((acc1, { time, totalSales }) => {
-      return acc1 + totalSales?totalSales:0;
-    }, 0);
-  }, 0);
+  const startDate = new Date("2021-02-01");
+  const endDate = new Date();
+  const { data: cumSumB } = useGetBookingsQuery();
+  const { data: cumSumO } = useGetOrdersQuery();
+  const [formattedData, setFormattedData] = useState(null);
 
-  let totalSalesForOrders = Object.values(orders).reduce((acc, timeType) => {
-    return acc + Object.values(timeType).reduce((acc1, { time, totalSales }) => {
-      return acc1 + totalSales?totalSales:0;
-    }, 0);
-  }, 0);
-  const formattedData = [
-    {
-      id: 'Bookings',
-      label: "Bookings",
-      value: totalSalesForBookings,
-      color: 'green',
-    },
-    {
-      id: 'Orders',
-      label: "Orders",
-      value: totalSalesForOrders,
-      color: 'yellow',
+  useEffect(() => {
+    if (cumSumB && cumSumO) {
+      setFormattedData([{
+          id: 'Bookings',
+          label: "Bookings",
+          value: sumOfSales(startDate, endDate, { cumSumB }),
+          color: 'green',
+        },
+        {
+          id: 'Orders',
+          label: "Orders",
+          value: sumOfSales(startDate, endDate, { cumSumO }),
+          color: 'yellow',
+        }]);
     }
-  ];
+  }, [cumSumB, cumSumO, theme.palette.secondary.main, theme.palette.primary.main]);
 
   return (
     <Box

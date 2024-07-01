@@ -1,77 +1,86 @@
-import React, { useMemo, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, useTheme } from "@mui/material";
 import Header from "components/Header";
 import { ResponsiveLine } from "@nivo/line";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useGetBookingsQuery } from "state/api";
 import { useGetOrdersQuery } from "state/api";
-// import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
-const Monthly = () => {
-  // const [startDate, setStartDate] = useState(new Date("2021-01-01"));
-  // const [endDate, setEndDate] = useState(new Date("2021-12-31"));
-  const { data: bookings } = useGetBookingsQuery();
-  const { data: orders } = useGetOrdersQuery();
+function sumOfSales(startDate, endDate, totals) {
+  const { cumSumB } = totals;
+  const startYear = startDate.getFullYear();
+  const startMonth = String(startDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
+  const startDay = String(startDate.getDate()).padStart(2, '0'); 
+  const endYear = endDate.getFullYear();
+  const endMonth = String(endDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
+  const endDay = String(endDate.getDate()).padStart(2, '0'); 
+  let sum = 0;
+
+  if (cumSumB && cumSumB[endYear] && cumSumB[endYear][endMonth] && cumSumB[endYear][endMonth][endDay]) {
+    sum = cumSumB[endYear][endMonth][endDay];
+  }
+
+  if (startDay > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth] && cumSumB[startYear][startMonth][startDay - 1]) {
+    sum -= cumSumB[startYear][startMonth][startDay - 1];
+  }
+
+  if (startMonth > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth - 1] && cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1]) {
+    sum -= cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1];
+  }
+
+  if (startYear > 0 && cumSumB && cumSumB[startYear - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1]) {
+    sum -= cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1];
+  }
+
+  return sum;
+}
+
+const Daily = () => {
+  const [startDate, setStartDate] = useState( new Date("2021-02-01"));
+  const [endDate, setEndDate] = useState(new Date("2021-03-01"));
   const theme = useTheme();
+  const { data: cumSumB } = useGetBookingsQuery();
+  const { data: cumSumO } = useGetOrdersQuery();
+  const [formattedData, setFormattedData] = useState(null);
 
-  const [formattedData] = useMemo(() => {
-    if (!bookings || !orders) return [];
+  useEffect(() => {
+    if (cumSumB && cumSumO) {
+      const totalSalesLineForBookings = {
+        id: "Booking",
+        color: theme.palette.secondary.main,
+        data: [],
+      };
+      const totalSalesLineForOrders = {
+        id: "Order",
+        color: theme.palette.primary.main,
+        data: [],
+      };
 
-    const { monthlyData: monthlyBookings } = bookings;
-    const { monthlyData: monthlyOrders } = orders;
+      let currentDate = new Date(startDate);
+      const end = new Date(endDate);
+      while (currentDate <= end) {
+        totalSalesLineForBookings.data.push({ x: currentDate.getMonth()+1, y: sumOfSales(startDate, currentDate, { cumSumB }) });
+        totalSalesLineForOrders.data.push({ x: currentDate.getMonth()+1, y: sumOfSales(startDate, currentDate, { cumSumO }) });
+        currentDate.setMonth(currentDate.getMonth() + 1);
+      }
 
-    const totalSalesLineForBookings = {
-      id: "Booking",
-      color: theme.palette.secondary.main,
-      data: [],
-    };
-
-    const totalSalesLineForOrders = {
-      id: "Order",
-      color: theme.palette.secondary.main,
-      data: [],
-    };
-
-    Object.values(monthlyBookings).forEach(({ month, totalSales }) => {
-      // const dateFormatted = new Date(month);
-      const splitDate = month.substring(month.indexOf("-") + 1);
-      totalSalesLineForBookings.data = [
-        ...totalSalesLineForBookings.data,
-        { x: splitDate, y: totalSales },
-      ];
-      // if (dateFormatted >= startDate && dateFormatted <= endDate) {
-      // }
-    });
-
-    Object.values(monthlyOrders).forEach(({ month, totalSales }) => {
-      // const dateFormatted = new Date(month);
-      const splitDate = month.substring(month.indexOf("-") + 1);
-      totalSalesLineForOrders.data = [
-        ...totalSalesLineForOrders.data,
-        { x: splitDate, y: totalSales },
-      ];
-      // if (dateFormatted >= startDate && dateFormatted <= endDate) {
-      // }
-    });
-
-    const formattedData = [totalSalesLineForBookings, totalSalesLineForOrders];
-    return [formattedData];
-  }, [bookings, orders, theme.palette.secondary.main, theme.palette.primary.main]);
+      setFormattedData([totalSalesLineForBookings, totalSalesLineForOrders]);
+    }
+  }, [cumSumB, cumSumO, startDate, endDate, theme.palette.secondary.main, theme.palette.primary.main]);
 
   return (
     <Box m="1.5rem 2.5rem">
-      <Header title="MONTHLY SALES" subtitle="Chart of monthly sales" />
+      <Header title="DAILY SALES" subtitle="Chart of daily sales" />
       <Box height="75vh">
         <Box display="flex" justifyContent="flex-end">
-          {/* <Box>
+          <Box>
             <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
               selectsStart
               startDate={startDate}
               endDate={endDate}
-              dateFormat="MM/yyyy"
-              showMonthYearPicker
             />
           </Box>
           <Box>
@@ -82,13 +91,11 @@ const Monthly = () => {
               startDate={startDate}
               endDate={endDate}
               minDate={startDate}
-              dateFormat="MM/yyyy"
-              showMonthYearPicker
             />
-          </Box> */}
+          </Box>
         </Box>
 
-        {(bookings && orders) ? (
+        {formattedData ? (
           <ResponsiveLine
             data={formattedData}
             theme={{
@@ -142,7 +149,7 @@ const Monthly = () => {
               orient: "bottom",
               tickSize: 5,
               tickPadding: 5,
-              tickRotation: 0,
+              tickRotation: 90,
               legend: "Month",
               legendOffset: 60,
               legendPosition: "middle",
@@ -198,5 +205,4 @@ const Monthly = () => {
     </Box>
   );
 };
-
-export default Monthly;
+export default Daily;
