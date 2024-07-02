@@ -5,15 +5,28 @@ import { ResponsiveLine } from "@nivo/line";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useSumContext } from "UpdateSumContext";
-import { usePostBookingsMutation, usePostOrdersMutation } from "state/api";
+
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+function sumOfSales(startDate, endDate, cumSum) {
+  startDate = new Date(startDate);
+  endDate = new Date(endDate);
+  startDate.setDate(startDate.getDate() - 1);
+  const startDateString = formatDate(startDate);
+  const endDateString = formatDate(endDate);
+  return cumSum[endDateString] - cumSum[startDateString];
+}
 
 const Daily = () => {
-  const [startDate, setStartDate] = useState(new Date("2021-02-01"));
-  const [endDate, setEndDate] = useState(new Date("2021-03-01"));
+  const [startDate, setStartDate] = useState(new Date("2023-05-01"));
+  const [endDate, setEndDate] = useState(new Date("2023-05-15"));
   const theme = useTheme();
   const { sumForBooking, sumForOrder } = useSumContext();
-  const [postBookings] = usePostBookingsMutation();
-  const [postOrders] = usePostOrdersMutation();
+  console.log(sumForBooking);
   const [formattedData, setFormattedData] = useState(null);
 
   useEffect(() => {
@@ -35,39 +48,28 @@ const Daily = () => {
       const end = new Date(endDate);
       while (currentDate <= end) {
         try {
-          const bookingResult = await postBookings({
-            startDate: startDate,
-            endDate: currentDate,
-            cumSum: sumForBooking,
-          });
-          const orderResult = await postOrders({
-            startDate: startDate,
-            endDate: currentDate,
-            cumSum: sumForOrder,
-          });
+          const bookingResult = sumOfSales(startDate,currentDate,sumForBooking);
+          const orderResult = sumOfSales(startDate,currentDate,sumForOrder);
 
           totalSalesLineForBookings.data.push({
             x: currentDate.getDate(),
-            y: bookingResult.data, // Assuming bookingResult contains the data you need
+            y: bookingResult,
           });
           totalSalesLineForOrders.data.push({
             x: currentDate.getDate(),
-            y: orderResult.data, // Assuming orderResult contains the data you need
+            y: orderResult, // Assuming orderResult contains the data you need
           });
 
         } catch (error) {
           console.error("Error fetching data:", error);
-          // Handle error as needed
         }
-
         currentDate.setDate(currentDate.getDate() + 1);
       }
-
       setFormattedData([totalSalesLineForBookings, totalSalesLineForOrders]);
     };
 
     fetchData();
-  }, [startDate, endDate, sumForBooking, sumForOrder, theme.palette.secondary.main, theme.palette.primary.main, postBookings, postOrders]);
+  }, [startDate, endDate, sumForBooking, sumForOrder, theme.palette.secondary.main, theme.palette.primary.main]);
 
   return (
     <Box m="1.5rem 2.5rem">

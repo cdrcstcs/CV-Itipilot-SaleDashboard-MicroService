@@ -20,20 +20,6 @@ export const api = createApi({
       query: (id) => `/user/${id}`, // Ensure template string is properly quoted
       providesTags: ["User"],
     }),
-    postBookings: build.mutation({
-      query: () => ({
-        url: "/bookings",
-        method: 'POST',
-      }),
-      invalidatesTags: ["Bookings"],
-    }),
-    postOrders: build.mutation({
-      query: () => ({
-        url: "/orders",
-        method: 'POST',
-      }),
-      invalidatesTags: ["Orders"],
-    }),
     getBookingSum: build.query({
       query: () => "/bsum",
       providesTags: ["Bsum"],
@@ -66,8 +52,6 @@ export const api = createApi({
 });
 export const {
   useGetUserQuery,
-  usePostBookingsMutation,
-  usePostOrdersMutation,
   useGetBookingSumQuery,
   useGetOrderSumQuery,
   useGetBookingListQuery,

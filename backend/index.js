@@ -6,8 +6,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import Order from "./models/order.js";
 import Booking from "./models/booking.js";
-import { calculateTotalSalesForBooking, getAllBookings, updateSumForBooking } from "./controllers/booking.js";
-import { calculateTotalSalesForOrder, getAllOrders, updateSumForOrder } from "./controllers/Order.js";
+import { getAllBookings, updateSumForBooking } from "./controllers/booking.js";
+import { getAllOrders, updateSumForOrder } from "./controllers/Order.js";
 import { getGeography } from "./controllers/Geography.js";
 import { getUser, getCustomers, getAdmins } from "./controllers/User.js";
 import jwt from "jsonwebtoken";
@@ -47,8 +47,6 @@ app.use(cors({
     credentials: true,
     origin: true,
 }));
-app.post("/bookings", calculateTotalSalesForBooking);
-app.post("/orders", calculateTotalSalesForOrder);
 app.get("/bsum", updateSumForBooking);
 app.get("/osum", updateSumForOrder);
 app.get("/geography", getGeography);

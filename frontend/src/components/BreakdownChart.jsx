@@ -1,72 +1,84 @@
 import React from "react";
 import { ResponsivePie } from "@nivo/pie";
 import { Box, useTheme } from "@mui/material";
-import { useGetBookingsQuery, useGetOrdersQuery } from "state/api";
 import { useState, useEffect } from "react";
+import { useSumContext } from "UpdateSumContext";
+import DatePicker from "react-datepicker";
+import Header from "./Header";
 
-function sumOfSales(startDate, endDate, totals) {
-  const { cumSumB } = totals;
-  const startYear = startDate.getFullYear();
-  const startMonth = String(startDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
-  const startDay = String(startDate.getDate()).padStart(2, '0'); 
-  const endYear = endDate.getFullYear();
-  const endMonth = String(endDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month and padding with zero if necessary
-  const endDay = String(endDate.getDate()).padStart(2, '0'); 
-  let sum = 0;
 
-  if (cumSumB && cumSumB[endYear] && cumSumB[endYear][endMonth] && cumSumB[endYear][endMonth][endDay]) {
-    sum = cumSumB[endYear][endMonth][endDay];
-  }
-
-  if (startDay > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth] && cumSumB[startYear][startMonth][startDay - 1]) {
-    sum -= cumSumB[startYear][startMonth][startDay - 1];
-  }
-
-  if (startMonth > 0 && cumSumB && cumSumB[startYear] && cumSumB[startYear][startMonth - 1] && cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1]) {
-    sum -= cumSumB[startYear][startMonth - 1][cumSumB[startYear][startMonth - 1].length - 1];
-  }
-
-  if (startYear > 0 && cumSumB && cumSumB[startYear - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1] && cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1]) {
-    sum -= cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1][cumSumB[startYear - 1][cumSumB[startYear - 1].length - 1].length - 1];
-  }
-
-  return sum;
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+function sumOfSales(startDate, endDate, cumSum) {
+  startDate = new Date(startDate);
+  endDate = new Date(endDate);
+  startDate.setDate(startDate.getDate() - 1);
+  const startDateString = formatDate(startDate);
+  const endDateString = formatDate(endDate);
+  return cumSum[endDateString] - cumSum[startDateString];
 }
 
 const BreakdownChart = () => {
   const theme = useTheme();
-  const startDate = new Date("2021-02-01");
-  const endDate = new Date();
-  const { data: cumSumB } = useGetBookingsQuery();
-  const { data: cumSumO } = useGetOrdersQuery();
+  const [startDate, setStartDate] = useState(new Date("2023-01-02"));
+  const [endDate, setEndDate] = useState(new Date("2023-09-02"));
+  const { sumForBooking, sumForOrder } = useSumContext();
   const [formattedData, setFormattedData] = useState(null);
 
   useEffect(() => {
-    if (cumSumB && cumSumO) {
-      console.log(cumSumB);
-      setFormattedData([{
-          id: 'Bookings',
-          label: "Bookings",
-          value: sumOfSales(startDate, endDate, { cumSumB }),
-          color: 'green',
-        },
-        {
-          id: 'Orders',
-          label: "Orders",
-          value: sumOfSales(startDate, endDate, { cumSumO }),
-          color: 'yellow',
-        }]);
-    }
-  }, [cumSumB, cumSumO, theme.palette.secondary.main, theme.palette.primary.main]);
+    const fetchData = async () => {
+      try {
+        const bookingResult = sumOfSales(startDate,endDate,sumForBooking);
+        const orderResult = sumOfSales(startDate,endDate,sumForOrder);
+        setFormattedData([
+          {
+            id: 'Bookings',
+            label: "Bookings",
+            value: bookingResult,
+            color: 'green',
+          },
+          {
+            id: 'Orders',
+            label: "Orders",
+            value: orderResult,
+            color: 'yellow',
+          },
+        ]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
+    fetchData();
+  }, [startDate, endDate, sumForBooking, sumForOrder]);
   return (
-    <Box
-      height="100%"
-      width={undefined}
-      minHeight={undefined}
-      minWidth={undefined}
-      position="relative"
-    >
+    <Box m="1.5rem 2.5rem">
+    <Box height="75vh">
+      <Box display="flex" justifyContent="flex-end">
+        <Box>
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+          />
+        </Box>
+        <Box>
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+          />
+        </Box>
+      </Box>
       {formattedData ? (
         <ResponsivePie
           data={formattedData}
@@ -150,6 +162,7 @@ const BreakdownChart = () => {
       ) : (
         <div>Loading</div>
       )}
+      </Box>
     </Box>
   );
   
