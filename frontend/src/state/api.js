@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:9000'}),
   reducerPath: "adminApi",
@@ -7,8 +6,6 @@ export const api = createApi({
     "User",
     "Bookings",
     "Orders",
-    "Bsum",
-    "Osum",
     "Customers",
     "Blist",
     "Olist",
@@ -17,16 +14,8 @@ export const api = createApi({
   ],
   endpoints: (build) => ({
     getUser: build.query({
-      query: (id) => `/user/${id}`, // Ensure template string is properly quoted
+      query: (id) => `/user/${id}`,
       providesTags: ["User"],
-    }),
-    getBookingSum: build.query({
-      query: () => "/bsum",
-      providesTags: ["Bsum"],
-    }),
-    getOrderSum: build.query({
-      query: () => "/osum",
-      providesTags: ["Osum"],
     }),
     getBookingList: build.query({
       query: () => "/blist",
@@ -52,8 +41,6 @@ export const api = createApi({
 });
 export const {
   useGetUserQuery,
-  useGetBookingSumQuery,
-  useGetOrderSumQuery,
   useGetBookingListQuery,
   useGetOrderListQuery,
   useGetCustomersQuery,

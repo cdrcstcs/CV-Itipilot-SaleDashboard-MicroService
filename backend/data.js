@@ -1160,16 +1160,267 @@ const bookings = [
     }
   ];
   
-  
+  const restaurants = [
+    {
+      restaurantName: "Italian Delights",
+      city: "Rome",
+      country: "Italy",
+      deliveryPrice: 200,
+      estimatedDeliveryTime: 30,
+      cuisines: ["Italian"],
+      menuItems: [
+        { name: "Pizza Margherita", price: 8.99 },
+        { name: "Caprese Salad", price: 7.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Taco Express",
+      city: "Mexico City",
+      country: "Mexico",
+      deliveryPrice: 250,
+      estimatedDeliveryTime: 25,
+      cuisines: ["Mexican"],
+      menuItems: [
+        { name: "Chicken Tacos", price: 10.49 },
+        { name: "Guacamole", price: 5.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Sushi Sensation",
+      city: "Tokyo",
+      country: "Japan",
+      deliveryPrice: 180,
+      estimatedDeliveryTime: 35,
+      cuisines: ["Japanese"],
+      menuItems: [
+        { name: "Sashimi Platter", price: 15.99 },
+        { name: "California Roll", price: 12.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "French Bistro",
+      city: "Paris",
+      country: "France",
+      deliveryPrice: 220,
+      estimatedDeliveryTime: 30,
+      cuisines: ["French"],
+      menuItems: [
+        { name: "Croque Monsieur", price: 9.99 },
+        { name: "Escargot", price: 14.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Burger Haven",
+      city: "New York City",
+      country: "United States",
+      deliveryPrice: 180,
+      estimatedDeliveryTime: 20,
+      cuisines: ["American"],
+      menuItems: [
+        { name: "Cheeseburger", price: 9.49 },
+        { name: "Chicken Wings", price: 12.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Paella Palace",
+      city: "Madrid",
+      country: "Spain",
+      deliveryPrice: 210,
+      estimatedDeliveryTime: 35,
+      cuisines: ["Spanish"],
+      menuItems: [
+        { name: "Seafood Paella", price: 17.99 },
+        { name: "Tapas Selection", price: 13.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Indian Spices",
+      city: "Mumbai",
+      country: "India",
+      deliveryPrice: 190,
+      estimatedDeliveryTime: 30,
+      cuisines: ["Indian"],
+      menuItems: [
+        { name: "Butter Chicken", price: 11.99 },
+        { name: "Vegetable Biryani", price: 9.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Greek Taverna",
+      city: "Athens",
+      country: "Greece",
+      deliveryPrice: 200,
+      estimatedDeliveryTime: 25,
+      cuisines: ["Greek"],
+      menuItems: [
+        { name: "Moussaka", price: 14.99 },
+        { name: "Souvlaki", price: 8.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Thai Spice",
+      city: "Bangkok",
+      country: "Thailand",
+      deliveryPrice: 230,
+      estimatedDeliveryTime: 30,
+      cuisines: ["Thai"],
+      menuItems: [
+        { name: "Pad Thai", price: 9.99 },
+        { name: "Green Curry", price: 11.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Brazilian BBQ",
+      city: "Rio de Janeiro",
+      country: "Brazil",
+      deliveryPrice: 240,
+      estimatedDeliveryTime: 35,
+      cuisines: ["Brazilian"],
+      menuItems: [
+        { name: "Churrasco", price: 19.99 },
+        { name: "Feijoada", price: 16.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Vietnamese Pho",
+      city: "Hanoi",
+      country: "Vietnam",
+      deliveryPrice: 210,
+      estimatedDeliveryTime: 30,
+      cuisines: ["Vietnamese"],
+      menuItems: [
+        { name: "Beef Pho", price: 8.99 },
+        { name: "Spring Rolls", price: 6.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Peruvian Delights",
+      city: "Lima",
+      country: "Peru",
+      deliveryPrice: 220,
+      estimatedDeliveryTime: 25,
+      cuisines: ["Peruvian"],
+      menuItems: [
+        { name: "Ceviche", price: 15.99 },
+        { name: "Lomo Saltado", price: 17.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Korean BBQ House",
+      city: "Seoul",
+      country: "South Korea",
+      deliveryPrice: 200,
+      estimatedDeliveryTime: 30,
+      cuisines: ["Korean"],
+      menuItems: [
+        { name: "Bulgogi", price: 18.99 },
+        { name: "Kimchi", price: 5.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Swiss Fondue",
+      city: "Zurich",
+      country: "Switzerland",
+      deliveryPrice: 250,
+      estimatedDeliveryTime: 40,
+      cuisines: ["Swiss"],
+      menuItems: [
+        { name: "Cheese Fondue", price: 22.99 },
+        { name: "Rösti", price: 12.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Moroccan Feast",
+      city: "Marrakesh",
+      country: "Morocco",
+      deliveryPrice: 230,
+      estimatedDeliveryTime: 35,
+      cuisines: ["Moroccan"],
+      menuItems: [
+        { name: "Tagine", price: 16.99 },
+        { name: "Couscous", price: 14.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Australian Outback",
+      city: "Sydney",
+      country: "Australia",
+      deliveryPrice: 240,
+      estimatedDeliveryTime: 30,
+      cuisines: ["Australian"],
+      menuItems: [
+        { name: "BBQ Shrimp", price: 20.99 },
+        { name: "Meat Pie", price: 8.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Dutch Pancakes",
+      city: "Amsterdam",
+      country: "Netherlands",
+      deliveryPrice: 210,
+      estimatedDeliveryTime: 25,
+      cuisines: ["Dutch"],
+      menuItems: [
+        { name: "Poffertjes", price: 9.99 },
+        { name: "Stroopwafel", price: 6.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "Turkish Delights",
+      city: "Istanbul",
+      country: "Turkey",
+      deliveryPrice: 220,
+      estimatedDeliveryTime: 30,
+      cuisines: ["Turkish"],
+      menuItems: [
+        { name: "Kebab", price: 12.99 },
+        { name: "Baklava", price: 7.99 }
+      ],
+      lastUpdated: new Date()
+    },
+    {
+      restaurantName: "South African Braai",
+      city: "Cape Town",
+      country: "South Africa",
+      deliveryPrice: 230,
+      estimatedDeliveryTime: 35,
+      cuisines: ["South African"],
+      menuItems: [
+        { name: "Boerewors", price: 14.99 },
+        { name: "Biltong", price: 18.99 }
+      ],
+      lastUpdated: new Date()
+    },
+  ];  
   // Function to convert country names to abbreviations
   function convertCountryToAbbreviation(countryName) {
     return countryMappings[countryName] || countryName; // Return abbreviation or original name if not found
   }
-  
+  const restaurantsWithAbbreviations = restaurants.map(restaurant => ({
+    ...restaurant,
+    country: convertCountryToAbbreviation(restaurant.country)
+  }));
   // Iterate through users array and convert country names to abbreviations
   const usersWithAbbreviations = users.map(user => ({
     ...user,
     country: convertCountryToAbbreviation(user.country)
   }));
     
-  export {orders, bookings, usersWithAbbreviations};
+  export {orders, bookings, usersWithAbbreviations, restaurantsWithAbbreviations};

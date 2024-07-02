@@ -25,13 +25,13 @@ const Daily = () => {
   const [startDate, setStartDate] = useState(new Date("2023-05-01"));
   const [endDate, setEndDate] = useState(new Date("2023-05-15"));
   const theme = useTheme();
-  const { sumForBooking, sumForOrder } = useSumContext();
+  const { sumForBooking, sumForOrder, sumForDelivery } = useSumContext();
   console.log(sumForBooking);
   const [formattedData, setFormattedData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!sumForBooking || !sumForOrder) return;
+      if (!sumForBooking || !sumForOrder || !sumForDelivery) return;
 
       const totalSalesLineForBookings = {
         id: "Booking",
@@ -40,7 +40,12 @@ const Daily = () => {
       };
       const totalSalesLineForOrders = {
         id: "Order",
-        color: theme.palette.primary.main,
+        color: 'green',
+        data: [],
+      };
+      const totalSalesLineForDeliveries = {
+        id: "Delivery",
+        color: "red",
         data: [],
       };
 
@@ -50,7 +55,7 @@ const Daily = () => {
         try {
           const bookingResult = sumOfSales(startDate,currentDate,sumForBooking);
           const orderResult = sumOfSales(startDate,currentDate,sumForOrder);
-
+          const deliveryResult = sumOfSales(startDate,currentDate, sumForDelivery);
           totalSalesLineForBookings.data.push({
             x: currentDate.getDate(),
             y: bookingResult,
@@ -59,17 +64,21 @@ const Daily = () => {
             x: currentDate.getDate(),
             y: orderResult, // Assuming orderResult contains the data you need
           });
+          totalSalesLineForDeliveries.data.push({
+            x: currentDate.getDate(),
+            y: deliveryResult, // Assuming orderResult contains the data you need
+          });
 
         } catch (error) {
           console.error("Error fetching data:", error);
         }
         currentDate.setDate(currentDate.getDate() + 1);
       }
-      setFormattedData([totalSalesLineForBookings, totalSalesLineForOrders]);
+      setFormattedData([totalSalesLineForBookings, totalSalesLineForOrders, totalSalesLineForDeliveries]);
     };
 
     fetchData();
-  }, [startDate, endDate, sumForBooking, sumForOrder, theme.palette.secondary.main, theme.palette.primary.main]);
+  }, [startDate, endDate, sumForBooking, sumForOrder, sumForDelivery, theme.palette.secondary.main, theme.palette.primary.main]);
 
   return (
     <Box m="1.5rem 2.5rem">

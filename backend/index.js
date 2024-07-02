@@ -6,12 +6,15 @@ import helmet from "helmet";
 import morgan from "morgan";
 import Order from "./models/order.js";
 import Booking from "./models/booking.js";
+import Restaurant from "./models/Restaurant.js";
 import { getAllBookings, updateSumForBooking } from "./controllers/booking.js";
 import { getAllOrders, updateSumForOrder } from "./controllers/Order.js";
+import { getAllRestaurants, updateSumForRestaurant } from "./controllers/restaurant.js";
 import { getGeography } from "./controllers/Geography.js";
 import { getUser, getCustomers, getAdmins } from "./controllers/User.js";
 import jwt from "jsonwebtoken";
-import { bookings, usersWithAbbreviations, orders } from "./data.js";
+import { bookings, usersWithAbbreviations, orders, restaurantsWithAbbreviations } from "./data.js";
+
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 import User from "./models/User.js";
 async function verifyToken(req, res) {
@@ -49,6 +52,7 @@ app.use(cors({
 }));
 app.get("/bsum", updateSumForBooking);
 app.get("/osum", updateSumForOrder);
+app.get("/rsum", updateSumForRestaurant);
 app.get("/geography", getGeography);
 app.get("/user/:id", getUser);
 app.post("/token", verifyToken);
@@ -56,14 +60,17 @@ app.get("/admins", getAdmins);
 app.get("/customers", getCustomers);
 app.get("/blist",getAllBookings);
 app.get("/olist",getAllOrders);
+app.get("/rlist",getAllRestaurants);
 const PORT = 9000;
 const MONGO_URL = "mongodb://localhost:27017/mongo-golang";
 mongoose.connect(MONGO_URL).then(async () => {
+    await Restaurant.deleteMany();
     await Booking.deleteMany(); // Clear existing data
     await Order.deleteMany(); // Clear existing data
     await User.deleteMany();
     await Booking.insertMany(bookings);
     await Order.insertMany(orders);
     await User.insertMany(usersWithAbbreviations);
+    await Restaurant.insertMany(restaurantsWithAbbreviations)
     app.listen(PORT, () => console.log(`Server running on PORT: ${PORT}`));
   }).catch((error) => console.log(`${error} did not connect`));

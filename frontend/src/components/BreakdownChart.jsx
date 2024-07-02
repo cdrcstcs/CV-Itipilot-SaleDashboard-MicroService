@@ -26,7 +26,7 @@ const BreakdownChart = () => {
   const theme = useTheme();
   const [startDate, setStartDate] = useState(new Date("2023-01-02"));
   const [endDate, setEndDate] = useState(new Date("2023-09-02"));
-  const { sumForBooking, sumForOrder } = useSumContext();
+  const { sumForBooking, sumForOrder, sumForDelivery } = useSumContext();
   const [formattedData, setFormattedData] = useState(null);
 
   useEffect(() => {
@@ -34,6 +34,7 @@ const BreakdownChart = () => {
       try {
         const bookingResult = sumOfSales(startDate,endDate,sumForBooking);
         const orderResult = sumOfSales(startDate,endDate,sumForOrder);
+        const deliveryResult = sumOfSales(startDate,endDate,sumForDelivery);
         setFormattedData([
           {
             id: 'Bookings',
@@ -47,6 +48,12 @@ const BreakdownChart = () => {
             value: orderResult,
             color: 'yellow',
           },
+          {
+            id: 'Deliveries',
+            label: "Deliveries",
+            value: deliveryResult,
+            color: 'red',
+          },
         ]);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -54,7 +61,7 @@ const BreakdownChart = () => {
     };
 
     fetchData();
-  }, [startDate, endDate, sumForBooking, sumForOrder]);
+  }, [startDate, endDate, sumForBooking, sumForOrder, sumForDelivery]);
   return (
     <Box m="1.5rem 2.5rem">
     <Box height="75vh">
