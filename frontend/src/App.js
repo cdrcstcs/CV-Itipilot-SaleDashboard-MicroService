@@ -45,7 +45,10 @@ function App() {
     fetchUserData();
   }, []);
   const {data} = useGetUserQuery(userData);
-  if(!data ||!sumForBooking||!sumForOrder){
+  if(!data){
+    return null;
+  }
+  if(!sumForBooking||!sumForOrder){
     return null;
   }
   return (

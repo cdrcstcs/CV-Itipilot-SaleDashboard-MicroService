@@ -1,10 +1,9 @@
 import User from "../models/User.js";
-import getCountryIso3 from "country-iso-2-to-3";
 export const getGeography = async (req, res) => {
     try {
       const users = await User.find();
       const mappedLocations = users.reduce((acc, { country }) => {
-        const countryISO3 = getCountryIso3(country);
+        const countryISO3 = country;
         if (!acc[countryISO3]) {
           acc[countryISO3] = 0;
         }

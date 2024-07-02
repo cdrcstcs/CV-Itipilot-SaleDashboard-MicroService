@@ -11,7 +11,7 @@ import { getAllOrders, updateSumForOrder } from "./controllers/Order.js";
 import { getGeography } from "./controllers/Geography.js";
 import { getUser, getCustomers, getAdmins } from "./controllers/User.js";
 import jwt from "jsonwebtoken";
-import { bookings, users, orders } from "./data.js";
+import { bookings, usersWithAbbreviations, orders } from "./data.js";
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 import User from "./models/User.js";
 async function verifyToken(req, res) {
@@ -64,6 +64,6 @@ mongoose.connect(MONGO_URL).then(async () => {
     await User.deleteMany();
     await Booking.insertMany(bookings);
     await Order.insertMany(orders);
-    await User.insertMany(users);
+    await User.insertMany(usersWithAbbreviations);
     app.listen(PORT, () => console.log(`Server running on PORT: ${PORT}`));
   }).catch((error) => console.log(`${error} did not connect`));
