@@ -1422,5 +1422,235 @@ const bookings = [
     ...user,
     country: convertCountryToAbbreviation(user.country)
   }));
+  const hotels = [
+    {
+      imageId: "6123456789abcdef01234567", // Example ObjectId
+      price: 150,
+      address: "123 Main Street",
+      city: "New York City",
+      bedroom: 2,
+      bathroom: 1,
+      country: "United States",
+      latitude: "40.7128",
+      longitude: "-74.0060",
+      userId: "6123456789abcdef01234568", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234568", // Example ObjectId
+      price: 200,
+      address: "456 Elm Street",
+      city: "Los Angeles",
+      bedroom: 3,
+      bathroom: 2,
+      country: "United States",
+      latitude: "34.0522",
+      longitude: "-118.2437",
+      userId: "6123456789abcdef01234569", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234569", // Example ObjectId
+      price: 180,
+      address: "789 Oak Avenue",
+      city: "Chicago",
+      bedroom: 2,
+      bathroom: 1.5,
+      country: "United States",
+      latitude: "41.8781",
+      longitude: "-87.6298",
+      userId: "6123456789abcdef0123456a", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef0123456a", // Example ObjectId
+      price: 220,
+      address: "101 Pine Road",
+      city: "San Francisco",
+      bedroom: 1,
+      bathroom: 1,
+      country: "United States",
+      latitude: "37.7749",
+      longitude: "-122.4194",
+      userId: "6123456789abcdef0123456b", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef0123456b", // Example ObjectId
+      price: 170,
+      address: "202 Cedar Lane",
+      city: "Houston",
+      bedroom: 3,
+      bathroom: 2,
+      country: "United States",
+      latitude: "29.7604",
+      longitude: "-95.3698",
+      userId: "6123456789abcdef0123456c", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef0123456c", // Example ObjectId
+      price: 190,
+      address: "303 Maple Drive",
+      city: "Phoenix",
+      bedroom: 2,
+      bathroom: 1.5,
+      country: "United States",
+      latitude: "33.4484",
+      longitude: "-112.0740",
+      userId: "6123456789abcdef0123456d", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef0123456d", // Example ObjectId
+      price: 160,
+      address: "404 Walnut Avenue",
+      city: "Philadelphia",
+      bedroom: 2,
+      bathroom: 1,
+      country: "United States",
+      latitude: "39.9526",
+      longitude: "-75.1652",
+      userId: "6123456789abcdef0123456e", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef0123456e", // Example ObjectId
+      price: 210,
+      address: "505 Birch Street",
+      city: "San Antonio",
+      bedroom: 3,
+      bathroom: 2.5,
+      country: "United States",
+      latitude: "29.4241",
+      longitude: "-98.4936",
+      userId: "6123456789abcdef0123456f", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef0123456f", // Example ObjectId
+      price: 175,
+      address: "606 Pine Avenue",
+      city: "San Diego",
+      bedroom: 1,
+      bathroom: 1,
+      country: "United States",
+      latitude: "32.7157",
+      longitude: "-117.1611",
+      userId: "6123456789abcdef01234570", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234570", // Example ObjectId
+      price: 185,
+      address: "707 Cedar Road",
+      city: "Dallas",
+      bedroom: 2,
+      bathroom: 1.5,
+      country: "United States",
+      latitude: "32.7767",
+      longitude: "-96.7970",
+      userId: "6123456789abcdef01234571", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234571", // Example ObjectId
+      price: 230,
+      address: "808 Oak Lane",
+      city: "Austin",
+      bedroom: 3,
+      bathroom: 2,
+      country: "United States",
+      latitude: "30.2672",
+      longitude: "-97.7431",
+      userId: "6123456789abcdef01234572", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234572", // Example ObjectId
+      price: 195,
+      address: "909 Elm Court",
+      city: "Seattle",
+      bedroom: 2,
+      bathroom: 1.5,
+      country: "United States",
+      latitude: "47.6062",
+      longitude: "-122.3321",
+      userId: "6123456789abcdef01234573", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234573", // Example ObjectId
+      price: 240,
+      address: "1010 Pine Avenue",
+      city: "Denver",
+      bedroom: 3,
+      bathroom: 2.5,
+      country: "United States",
+      latitude: "39.7392",
+      longitude: "-104.9903",
+      userId: "6123456789abcdef01234574", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234574", // Example ObjectId
+      price: 200,
+      address: "1111 Maple Drive",
+      city: "Miami",
+      bedroom: 1,
+      bathroom: 1,
+      country: "United States",
+      latitude: "25.7617",
+      longitude: "-80.1918",
+      userId: "6123456789abcdef01234575", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234575", // Example ObjectId
+      price: 205,
+      address: "1212 Cedar Avenue",
+      city: "Atlanta",
+      bedroom: 2,
+      bathroom: 1.5,
+      country: "United States",
+      latitude: "33.7490",
+      longitude: "-84.3880",
+      userId: "6123456789abcdef01234576", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234576", // Example ObjectId
+      price: 180,
+      address: "1313 Oak Lane",
+      city: "Las Vegas",
+      bedroom: 2,
+      bathroom: 1,
+      country: "United States",
+      latitude: "36.1699",
+      longitude: "-115.1398",
+      userId: "6123456789abcdef01234577", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234577", // Example ObjectId
+      price: 215,
+      address: "1414 Walnut Court",
+      city: "Orlando",
+      bedroom: 3,
+      bathroom: 2,
+      country: "United States",
+      latitude: "28.5383",
+      longitude: "-81.3792",
+      userId: "6123456789abcdef01234578", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234578", // Example ObjectId
+      price: 190,
+      address: "1515 Pine Road",
+      city: "Washington",
+      bedroom: 2,
+      bathroom: 1.5,
+      country: "United States",
+      latitude: "38.9072",
+      longitude: "-77.0369",
+      userId: "6123456789abcdef01234579", // Example ObjectId
+    },
+    {
+      imageId: "6123456789abcdef01234579", // Example ObjectId
+      price: 225,
+      address: "1616 Elm Street",
+      city: "Boston",
+      bedroom: 3,
+      bathroom: 2.5,
+      country: "United States",
+      latitude: "42.3601",
+      longitude: "-71.0589",
+      userId: "6123456789abcdef0123457a", // Example ObjectId
+    },
+];
     
-  export {orders, bookings, usersWithAbbreviations, restaurantsWithAbbreviations};
+export {orders, bookings, usersWithAbbreviations, restaurantsWithAbbreviations, hotels};

@@ -21,6 +21,9 @@ import {
   CalendarMonthOutlined,
   AdminPanelSettingsOutlined,
   PieChartOutlined,
+  Restaurant,
+  CardGiftcardOutlined,
+  Hotel,
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -33,7 +36,15 @@ const navItems = [
   },
   {
     text: "Orders",
-    icon: <ShoppingCartOutlined />,
+    icon: <CardGiftcardOutlined />,
+  },
+  {
+    text: "Restaurants",
+    icon: <Restaurant />,
+  },
+  {
+    text: "Hotels",
+    icon: <Hotel />,
   },
   {
     text: "Customers",

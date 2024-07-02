@@ -16,6 +16,8 @@ import { useGetUserQuery } from "state/api";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSumContext } from "UpdateSumContext";
+import Restaurants from "scenes/restaurants";
+import Hotels from "scenes/hotels";
 function getCookie(name) {
   const cookieRegex = new RegExp(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
   const cookieMatch = document.cookie.match(cookieRegex);
@@ -26,27 +28,27 @@ function App() {
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const [userData, setUserData] = useState(null);
   const { sumForBooking, sumForOrder } = useSumContext();
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const token = getCookie('usertoken');
-  //       if (!token) {
-  //         throw new Error('User token not found');
-  //       }
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = getCookie('usertoken');
+        if (!token) {
+          throw new Error('User token not found');
+        }
 
-  //       const res = await axios.post('http://localhost:9000/token', {token});
-  //       setUserData(res.data.userId);
-  //     } catch (error) {
-  //       console.error('Error fetching user data:', error);
-  //       setUserData(null);
-  //     }
-  //   };
+        const res = await axios.post('http://localhost:9000/token', {token});
+        setUserData(res.data.userId);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setUserData(null);
+      }
+    };
 
-  //   fetchUserData();
-  // }, []);
-  // const {data} = useGetUserQuery(userData);
-  // if(!data){
-  //   return null;
+    fetchUserData();
+  }, []);
+  const {data} = useGetUserQuery(userData);
+  if(!data){
+    return null;
   // }
   if(!sumForBooking||!sumForOrder){
     return null;
@@ -61,6 +63,8 @@ function App() {
               <Route path="/" element={<Navigate to="/bookings" replace />} />
               <Route path="/bookings" element={<Bookings />} />
               <Route path="/orders" element={<Orders />} />
+              <Route path="/restaurants" element={<Restaurants />} />
+              <Route path="/hotels" element={<Hotels />} />
               <Route path="/customers" element={<Customers />} />
               <Route path="/geography" element={<Geography />} />
               <Route path="/daily" element={<Daily />} />

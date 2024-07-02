@@ -11,16 +11,18 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Header from "components/Header";
-import { useGetBookingListQuery } from "state/api";
-const Booking = ({
+import { useGetHotelListQuery } from "state/api"; // Adjust path as needed
+const Hotel = ({
   _id,
   price,
   address,
   city,
   bedroom,
   bathroom,
+  country,
+  latitude,
+  longitude,
   userId,
-  createdAt
 }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -39,7 +41,14 @@ const Booking = ({
           color={theme.palette.secondary[700]}
           gutterBottom
         >
-          {city}
+          {_id}
+        </Typography>
+        <Typography
+          sx={{ fontSize: 14 }}
+          color={theme.palette.secondary[700]}
+          gutterBottom
+        >
+          {city}, {country}
         </Typography>
         <Typography variant="h5" component="div">
           {address}
@@ -47,9 +56,7 @@ const Booking = ({
         <Typography sx={{ mb: "1.5rem" }} color={theme.palette.secondary[400]}>
           ${Number(price).toFixed(2)}
         </Typography>
-        <Typography variant="body2">
-          {userId ? `User ID: ${userId}` : 'No user specified'}
-        </Typography>
+        <Typography variant="body2">{userId ? `User ID: ${userId}` : "No user specified"}</Typography>
         <Typography>{bedroom} beds</Typography>
         <Typography>{bathroom} bathrooms</Typography>
       </CardContent>
@@ -71,20 +78,21 @@ const Booking = ({
         }}
       >
         <CardContent>
-          <Typography>Id: {_id}</Typography>
-          <Typography>Created At: {new Date(createdAt).toLocaleString()}</Typography>
+          <Typography>Latitude: {latitude}</Typography>
+          <Typography>Longitude: {longitude}</Typography>
         </CardContent>
       </Collapse>
     </Card>
   );
 };
-const Bookings = () => {
-  const { data, isLoading } = useGetBookingListQuery();
+
+const Hotels = () => {
+  const { data, isLoading } = useGetHotelListQuery();
   const isNonMobile = useMediaQuery("(min-width: 1000px)");
 
   return (
     <Box m="1.5rem 2.5rem">
-      <Header title="BOOKINGS" subtitle="List of bookings." />
+      <Header title="Hotels" subtitle="List of Hotels." />
       {data || !isLoading ? (
         <Box
           mt="20px"
@@ -105,19 +113,23 @@ const Bookings = () => {
               city,
               bedroom,
               bathroom,
-              userId, 
-              createdAt,
+              country,
+              latitude,
+              longitude,
+              userId,
             }) => (
-              <Booking
-                key={_id} 
-                _id={_id} 
+              <Hotel
+                key={_id}
+                _id={_id}
                 price={price}
                 address={address}
                 city={city}
                 bedroom={bedroom}
                 bathroom={bathroom}
+                country={country}
+                latitude={latitude}
+                longitude={longitude}
                 userId={userId}
-                createdAt={createdAt}
               />
             )
           )}
@@ -129,4 +141,4 @@ const Bookings = () => {
   );
 };
 
-export default Bookings;
+export default Hotels;

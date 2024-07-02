@@ -9,6 +9,8 @@ export const api = createApi({
     "Customers",
     "Blist",
     "Olist",
+    "Rlist",
+    "Hlist",
     "Geography",
     "Admins",
   ],
@@ -24,6 +26,14 @@ export const api = createApi({
     getOrderList: build.query({
       query: () => "/olist",
       providesTags: ["Olist"],
+    }),
+    getRestaurantList: build.query({
+      query: () => "/rlist",
+      providesTags: ["Rlist"],
+    }),
+    getHotelList: build.query({
+      query: () => "/hlist",
+      providesTags: ["Hlist"],
     }),
     getCustomers: build.query({
       query: () => "/customers",
@@ -43,6 +53,8 @@ export const {
   useGetUserQuery,
   useGetBookingListQuery,
   useGetOrderListQuery,
+  useGetRestaurantListQuery,
+  useGetHotelListQuery,
   useGetCustomersQuery,
   useGetGeographyQuery,
   useGetAdminsQuery,
