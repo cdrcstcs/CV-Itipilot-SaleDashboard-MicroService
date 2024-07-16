@@ -16,8 +16,8 @@ import { getUser, getCustomers, getAdmins } from "./controllers/User.js";
 import jwt from "jsonwebtoken";
 import { bookings, usersWithAbbreviations, orders, restaurantsWithAbbreviations, hotels } from "./data.js";
 import { getAllHotels } from "./controllers/hotels.js";
-const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 import User from "./models/User.js";
+import 'dotenv/config';
 async function verifyToken(req, res) {
   try {
       console.log(req.body);
@@ -26,7 +26,7 @@ async function verifyToken(req, res) {
           throw new Error('No token provided');
       }
       const userData = await new Promise((resolve, reject) => {
-          jwt.verify(token, jwtSecret, {}, (err, decoded) => {
+          jwt.verify(token, process.env.JWT_SECRET, {}, (err, decoded) => {
               if (err) {
                   reject(err);
               } else {
@@ -63,9 +63,7 @@ app.get("/blist",getAllBookings);
 app.get("/olist",getAllOrders);
 app.get("/rlist",getAllRestaurants);
 app.get("/hlist",getAllHotels);
-const PORT = 9000;
-const MONGO_URL = "mongodb://localhost:27017/mongo-golang";
-mongoose.connect(MONGO_URL).then(async () => {
+mongoose.connect(process.env.MONGO_URL).then(async () => {
     await Restaurant.deleteMany();
     await Booking.deleteMany(); // Clear existing data
     await Order.deleteMany(); // Clear existing data
@@ -76,5 +74,5 @@ mongoose.connect(MONGO_URL).then(async () => {
     await User.insertMany(usersWithAbbreviations);
     await Restaurant.insertMany(restaurantsWithAbbreviations);
     await Hotel.insertMany(hotels);
-    app.listen(PORT, () => console.log(`Server running on PORT: ${PORT}`));
-  }).catch((error) => console.log(`${error} did not connect`));
+    app.listen(process.env.PORT, () => console.log(`Server running on PORT: ${process.env.PORT}`));
+}).catch((error) => console.log(`${error} did not connect`));

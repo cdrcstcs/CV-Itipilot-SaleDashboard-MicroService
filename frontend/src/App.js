@@ -47,9 +47,9 @@ function App() {
     fetchUserData();
   }, []);
   const {data} = useGetUserQuery(userData);
-  if(!data){
-    return null;
-  // }
+  // if(!data){
+  //   return null;
+  // // }
   if(!sumForBooking||!sumForOrder){
     return null;
   }
